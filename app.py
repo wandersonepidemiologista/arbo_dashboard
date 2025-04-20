@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import plotly.graph_objects as go
 from utils.data_loader import load_data
 
 # --- Login simples com st.secrets ---
@@ -27,35 +29,30 @@ st.set_page_config(page_title="ESP Brumadinho", layout="wide")
 
 @st.cache_data
 def load_data_cached():
-    df = pd.read_parquet("data/arbo14vale24_clean.parquet")
+    try:
+        df = pd.read_parquet("data/arbo14vale24_clean.parquet")
+    except Exception as e:
+        st.error(f"Erro ao carregar Parquet: {e}")
+        st.stop()
     df['dt_notific'] = pd.to_datetime(df['dt_notific'])
     df['periodo'] = df['nu_ano'].astype(int).apply(lambda x: 'Pré-ESP' if x < 2019 else 'Pós-ESP')
+    ordem_etaria = [
+        "01.0-4 anos", "02.5-9 anos", "03.10 A 14 anos", "04.15-19 anos", "05.20-29 anos",
+        "06.30-39 anos", "07.40-49 anos", "08.50-59 anos", "09.60-69 anos", "10.70-79 anos", "11.80+ anos"
+    ]
+    df['faixa_etaria'] = pd.Categorical(df['faixa_etaria'], categories=ordem_etaria, ordered=True)
     return df
 
 df = load_data_cached()
 
 # ========= SIDEBAR COM FILTROS =========
 st.sidebar.title("🔍 Filtros")
-
-# Período
 periodo_sel = st.sidebar.multiselect("Período", options=df['periodo'].unique(), default=df['periodo'].unique())
-
-# Ano
 anos_sel = st.sidebar.slider("Ano da Notificação", int(df['nu_ano'].min()), int(df['nu_ano'].max()), (2014, 2024))
-
-# Município
 munic_sel = st.sidebar.multiselect("Município", options=sorted(df['nomedomunicipio'].unique()), default=None)
-
-# Agravo
 agravo_sel = st.sidebar.multiselect("Doença", options=df['classi_fin'].unique(), default=df['classi_fin'].unique())
-
-# Sexo
 sexo_sel = st.sidebar.multiselect("Sexo", options=df['cs_sexo'].unique(), default=["1.Feminino", "2.Masculino"])
-
-# Raça
 raca_sel = st.sidebar.multiselect("Raça/Cor", options=df['cs_raca'].unique(), default=df['cs_raca'].unique())
-
-# Grupo de estudo
 estudo_sel = st.sidebar.multiselect("Grupo (caso/controle)", options=df['estudovale'].dropna().unique(), default=df['estudovale'].dropna().unique())
 
 # ========= FILTRAGEM =========
@@ -71,11 +68,15 @@ df_filtered = df[
 if munic_sel:
     df_filtered = df_filtered[df_filtered['nomedomunicipio'].isin(munic_sel)]
 
+if df_filtered.empty:
+    st.warning("Nenhum dado encontrado com os filtros selecionados.")
+    st.stop()
+
 # ========= NAVEGAÇÃO =========
 paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "Download", "ITS / DiD"]
 pagina = st.sidebar.radio("Navegação", paginas)
 
-# ========= PÁGINA 1: VISÃO GERAL =========
+# ========= VISÃO GERAL =========
 if pagina == "Visão Geral":
     st.title("📊 Situação Epidemiológica Geral")
     st.metric("Casos Registrados", f"{len(df_filtered):,}")
@@ -89,17 +90,16 @@ if pagina == "Visão Geral":
     st.markdown("---")
     st.markdown("### 📊 Tabela Síntese de Casos confirmados por Doença e Grupo de Estudo (com %)")
     df_filtered["estudo"] = df_filtered["estudo"].replace({1: "Caso", 2: "Controle"})
-    tabela_sintese = df_filtered.groupby(["ID_AGRAVO", "estudo"]).size().unstack(fill_value=0)
+    tabela = df_filtered.groupby(["ID_AGRAVO", "estudo"]).size().unstack(fill_value=0)
     for col in ["Caso", "Controle"]:
-        if col not in tabela_sintese.columns:
-            tabela_sintese[col] = 0
-    tabela_sintese["Total"] = tabela_sintese["Caso"] + tabela_sintese["Controle"]
-    tabela_sintese["% Caso"] = (tabela_sintese["Caso"] / tabela_sintese["Total"] * 100).round(1)
-    tabela_sintese["% Controle"] = (tabela_sintese["Controle"] / tabela_sintese["Total"] * 100).round(1)
-    tabela_sintese = tabela_sintese.sort_values("Total", ascending=False)
-    st.dataframe(tabela_sintese.drop(columns=["Total"]))
+        if col not in tabela.columns:
+            tabela[col] = 0
+    tabela["Total"] = tabela["Caso"] + tabela["Controle"]
+    tabela["% Caso"] = (tabela["Caso"] / tabela["Total"] * 100).round(1)
+    tabela["% Controle"] = (tabela["Controle"] / tabela["Total"] * 100).round(1)
+    st.dataframe(tabela.drop(columns=["Total"]))
 
-# ========= PÁGINA 2: TEMPO =========
+# ========= TEMPO =========
 elif pagina == "Tempo":
     st.title("⏳ Análise Temporal")
     fig = px.line(df_filtered.groupby(['nu_ano', 'classi_fin']).size().reset_index(name='casos'),
@@ -107,7 +107,7 @@ elif pagina == "Tempo":
                   title="Série Temporal de Casos por Ano")
     st.plotly_chart(fig, use_container_width=True)
 
-# ========= PÁGINA 3: LUGAR =========
+# ========= LUGAR =========
 elif pagina == "Lugar":
     st.title("🗺 Distribuição Espacial dos Casos")
     mapa = df_filtered.groupby("nomedomunicipio").size().reset_index(name="casos")
@@ -115,31 +115,23 @@ elif pagina == "Lugar":
                  title="Casos por Município")
     st.plotly_chart(fig, use_container_width=True)
 
-# ========= PÁGINA 4: PESSOA =========
+# ========= PESSOA =========
 elif pagina == "Pessoa":
     st.title("🧍 Perfil das Pessoas Afetadas")
-
     col1, col2 = st.columns(2)
-
     with col1:
-        fig_sexo = px.pie(df_filtered, names='cs_sexo', title='Distribuição por Sexo')
-        st.plotly_chart(fig_sexo, use_container_width=True)
-
+        st.plotly_chart(px.pie(df_filtered, names='cs_sexo', title='Distribuição por Sexo'), use_container_width=True)
     with col2:
-        fig_idade = px.histogram(df_filtered, x="faixa_etaria", color="classi_fin",
-                                 title="Distribuição por Faixa Etária")
-        st.plotly_chart(fig_idade, use_container_width=True)
+        st.plotly_chart(px.histogram(df_filtered, x="faixa_etaria", color="classi_fin",
+                                     title="Distribuição por Faixa Etária"), use_container_width=True)
+    st.plotly_chart(px.pie(df_filtered, names='cs_raca', title='Distribuição por Raça/Cor'), use_container_width=True)
 
-    fig_raca = px.pie(df_filtered, names='cs_raca', title='Distribuição por Raça/Cor')
-    st.plotly_chart(fig_raca, use_container_width=True)
-
-# ========= PÁGINA 5: DOWNLOAD =========
+# ========= DOWNLOAD =========
 elif pagina == "Download":
     st.title("📥 Download dos Dados")
-    st.write("Você pode baixar os dados filtrados abaixo:")
     st.download_button("📄 Baixar CSV", data=df_filtered.to_csv(index=False), file_name="dados_filtrados.csv")
 
-# ========= PÁGINA 6: ITS / DID =========
+# ========= ITS / DiD =========
 elif pagina == "ITS / DiD":
     st.title("📈 ITS e Diferenças em Diferenças (DiD)")
     agravo_focus = st.selectbox("Selecione o Agravo", df_filtered['classi_fin'].unique())
@@ -153,7 +145,6 @@ elif pagina == "ITS / DiD":
     df_model['tempo_pos'] = df_model['tempo'] * df_model['intervencao']
 
     st.markdown("#### ITS com GLM (Poisson) por Semana Epidemiológica")
-    import statsmodels.formula.api as smf
     glm_model = smf.glm("casos ~ tempo + intervencao + tempo_pos", data=df_model, family=sm.families.Poisson()).fit()
     st.write(glm_model.summary())
 
@@ -164,12 +155,11 @@ elif pagina == "ITS / DiD":
     df_model['ic_inferior'] = pred_summary['mean_ci_lower']
     df_model['ic_superior'] = pred_summary['mean_ci_upper']
 
-    import plotly.graph_objects as go
     fig_its = go.Figure()
     fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['casos'], mode='lines+markers', name='Observado'))
     fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['preditos'], mode='lines', name='Predito'))
-    fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['ic_superior'], mode='lines', name='IC 95% Sup', line=dict(width=0), showlegend=False))
-    fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['ic_inferior'], mode='lines', name='IC 95% Inf', fill='tonexty', line=dict(width=0), showlegend=False))
+    fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['ic_superior'], mode='lines', line=dict(width=0), name='IC Sup', showlegend=False))
+    fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['ic_inferior'], mode='lines', fill='tonexty', line=dict(width=0), name='IC Inf', showlegend=False))
     fig_its.update_layout(title=f"ITS – {agravo_focus} (GLM Poisson + IC95%)", xaxis_title='Data', yaxis_title='Casos')
     st.plotly_chart(fig_its, use_container_width=True)
 

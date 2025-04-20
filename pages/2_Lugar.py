@@ -3,6 +3,9 @@ import pandas as pd
 import plotly.express as px
 from utils.data_loader import load_data
 
+from utils.auth import checar_login
+checar_login()
+
 st.title("🗺️ Distribuição Geográfica dos Casos")
 
 df = load_data("data/arbo14vale24.parquet")

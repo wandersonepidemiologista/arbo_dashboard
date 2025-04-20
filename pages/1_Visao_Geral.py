@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 import plotly.express as px
 from utils.data_loader import load_data
 from utils.auth import checar_login
@@ -50,12 +48,14 @@ with tab1:
             "estudo": "Estudo"
         }
     )
+
     fig_taxa.update_layout(
         title_font=dict(size=16),
         margin=dict(l=40, r=40, t=80, b=40),
         legend_title="Estudo",
         height=500
     )
+
     fig_taxa.add_annotation(
         text="Fonte: Sistema de Informação de Agravos de Notificação (Sinan) - atualizado em janeiro de 2025",
         xref="paper", yref="paper",
@@ -65,7 +65,6 @@ with tab1:
     )
 
     st.plotly_chart(fig_taxa, use_container_width=True)
-
 
 # --- TAB LUGAR ---
 with tab2:
@@ -91,4 +90,3 @@ with tab3:
         idade.columns = ["Faixa Etária", "Casos"]
         fig = px.bar(idade, x="Faixa Etária", y="Casos", title="Distribuição por Faixa Etária")
         st.plotly_chart(fig, use_container_width=True)
-

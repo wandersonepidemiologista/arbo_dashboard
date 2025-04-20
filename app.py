@@ -27,7 +27,7 @@ st.set_page_config(page_title="ESP Brumadinho", layout="wide")
 
 @st.cache_data
 def load_data_cached():
-    df = load_data("data/arbo14vale24.parquet")
+    df = pd.read_parquet("data/arbo14vale24_clean.parquet")
     df['dt_notific'] = pd.to_datetime(df['dt_notific'])
     df['periodo'] = df['nu_ano'].astype(int).apply(lambda x: 'Pré-ESP' if x < 2019 else 'Pós-ESP')
     return df

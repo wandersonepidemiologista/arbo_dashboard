@@ -28,7 +28,8 @@ import plotly.express as px
 st.set_page_config(page_title="Dashboard Arboviroses", layout="wide")
 
 # --- Carregamento dos dados ---
-DATA_PATH = "data/arbo14vale24.csv"
+DATA_PATH = "data/arbo14vale24.parquet"
+
 df = load_data(DATA_PATH)
 
 # --- Conversões e tratamento ---

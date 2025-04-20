@@ -65,12 +65,27 @@ Use o menu lateral para acessar:
 st.markdown("📌 *Este painel é uma ferramenta exploratória, não substituindo análises oficiais das autoridades de saúde.*")
 
 # --- Tabela síntese por agravo e grupo de estudo ---
+# Recodificar o campo estudo
 df["estudo"] = df["estudo"].replace({1: "Caso", 2: "Controle"})
 
+# Tabela cruzada: ID_AGRAVO vs estudo
 tabela_sintese = df.groupby(["ID_AGRAVO", "estudo"]).size().unstack(fill_value=0)
-tabela_sintese["Total"] = tabela_sintese.sum(axis=1)
-tabela_sintese = tabela_sintese.sort_values("Total", ascending=False)
-tabela_sintese.drop(columns="Total", inplace=True)
 
-st.markdown("### 📊 Tabela Síntese de Casos por Doença e Grupo de Estudo")
-st.dataframe(tabela_sintese)
+# Garante que as colunas existam mesmo se algum grupo estiver ausente
+for col in ["Caso", "Controle"]:
+    if col not in tabela_sintese.columns:
+        tabela_sintese[col] = 0
+
+# Total por agravo
+tabela_sintese["Total"] = tabela_sintese["Caso"] + tabela_sintese["Controle"]
+
+# Percentuais
+tabela_sintese["% Caso"] = (tabela_sintese["Caso"] / tabela_sintese["Total"] * 100).round(1)
+tabela_sintese["% Controle"] = (tabela_sintese["Controle"] / tabela_sintese["Total"] * 100).round(1)
+
+# Ordenar por total
+tabela_sintese = tabela_sintese.sort_values("Total", ascending=False)
+
+# Exibir
+st.markdown("### 📊 Tabela Síntese de Casos por Doença e Grupo de Estudo (com %)")
+st.dataframe(tabela_sintese.drop(columns=["Total"]))

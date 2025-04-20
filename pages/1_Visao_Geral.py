@@ -12,7 +12,6 @@ st.title("📊 Visão Geral – Arboviroses")
 df = load_data("data/arbo14vale24.parquet")
 
 # --- Ajustes de campos e tipos ---
-df["estudovale"] = df["estudovale"].replace({1: "Caso", 2: "Controle", "1": "Caso", "2": "Controle"})
 df["nu_ano"] = pd.to_numeric(df["nu_ano"], errors="coerce")
 df["dt_notific"] = pd.to_datetime(df["dt_notific"], errors="coerce")
 df["mes_ano"] = pd.to_datetime(df["dt_notific"].dt.to_period("M").astype(str))

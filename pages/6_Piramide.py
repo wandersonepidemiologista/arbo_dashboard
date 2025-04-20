@@ -28,17 +28,22 @@ if agravo_sel != "Todos":
 if estudo_sel != "Todos":
     df = df[df["estudo"] == estudo_sel]
 
-# Agrupar para pirâmide
-df = df[df["CS_SEXO"].isin(["M", "F"])]  # remove dados sem sexo
+# Apenas registros com sexo válido
+df = df[df["CS_SEXO"].isin(["M", "F"])]
 
-# Agrupa os dados para a pirâmide
+# Agrupar os dados para a pirâmide
 piramide = (
     df.groupby(["faixa_etaria", "CS_SEXO"])
     .size()
     .reset_index(name="Casos")
 )
 
-# Negativar homens para formar pirâmide
+# Ordena faixas etárias corretamente
+ordem = ["0–10", "11–20", "21–40", "41–60", "61–80", "81+"]
+piramide["faixa_etaria"] = pd.Categorical(piramide["faixa_etaria"], categories=ordem, ordered=True)
+
+# Negativar os homens
+piramide["Casos"] = piramide["Casos"].astype(int)
 piramide["Casos"] = piramide.apply(
     lambda row: -row["Casos"] if row["CS_SEXO"] == "M" else row["Casos"], axis=1
 )
@@ -61,6 +66,8 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, use_container_width=True)
+
+# Informações complementares
 st.markdown(
     """
     A pirâmide etária é uma representação gráfica que mostra a distribuição da população por faixa etária e sexo. 

@@ -51,10 +51,13 @@ with tab3:
 
     with col1:
         sexo = df["CS_SEXO"].value_counts().reset_index()
-        fig = px.pie(sexo, names="index", values="CS_SEXO", title="Sexo")
+        sexo.columns = ["Sexo", "Casos"]
+        fig = px.pie(sexo, names="Sexo", values="Casos", title="Distribuição por Sexo")
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         idade = df["faixa_etaria"].value_counts().sort_index().reset_index()
-        fig = px.bar(idade, x="index", y="faixa_etaria", title="Faixa Etária")
+        idade.columns = ["Faixa Etária", "Casos"]
+        fig = px.bar(idade, x="Faixa Etária", y="Casos", title="Distribuição por Faixa Etária")
         st.plotly_chart(fig, use_container_width=True)
+

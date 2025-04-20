@@ -87,5 +87,5 @@ tabela_sintese["% Controle"] = (tabela_sintese["Controle"] / tabela_sintese["Tot
 tabela_sintese = tabela_sintese.sort_values("Total", ascending=False)
 
 # Exibir
-st.markdown("### 📊 Tabela Síntese de Casos por Doença e Grupo de Estudo (com %)")
+st.markdown("### 📊 Tabela Síntese de Casos confirmados por Doença e Grupo de Estudo (com %)")
 st.dataframe(tabela_sintese.drop(columns=["Total"]))

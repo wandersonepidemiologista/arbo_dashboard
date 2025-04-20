@@ -1,4 +1,8 @@
 import streamlit as st
+from utils.data_loader import load_data
+
+# --- Carregamento dos dados ---
+df = load_data("data/arbo14vale24.parquet")
 
 # --- Login simples com st.secrets ---
 def login():
@@ -18,7 +22,7 @@ if not st.session_state["autenticado"]:
     login()
     st.stop()
 
-# --- Página inicial ---
+# --- Configuração da página ---
 st.set_page_config(page_title="Arboviroses - Brumadinho", layout="wide")
 st.title("📊 Dashboard de Arboviroses – Brumadinho e Região")
 st.markdown("---")
@@ -60,12 +64,13 @@ Use o menu lateral para acessar:
 
 st.markdown("📌 *Este painel é uma ferramenta exploratória, não substituindo análises oficiais das autoridades de saúde.*")
 
-# Certifique-se de que o campo estudo está recodificado
+# --- Tabela síntese por agravo e grupo de estudo ---
 df["estudo"] = df["estudo"].replace({1: "Caso", 2: "Controle"})
 
-# Agrupar por ID_AGRAVO (doença) e grupo de estudo
 tabela_sintese = df.groupby(["ID_AGRAVO", "estudo"]).size().unstack(fill_value=0)
+tabela_sintese["Total"] = tabela_sintese.sum(axis=1)
+tabela_sintese = tabela_sintese.sort_values("Total", ascending=False)
+tabela_sintese.drop(columns="Total", inplace=True)
 
-# Mostrar a tabela
 st.markdown("### 📊 Tabela Síntese de Casos por Doença e Grupo de Estudo")
 st.dataframe(tabela_sintese)

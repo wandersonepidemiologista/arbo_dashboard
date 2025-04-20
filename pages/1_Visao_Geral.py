@@ -57,11 +57,11 @@ with tab1:
     )
 
     fig_taxa.add_annotation(
-        text="Fonte: Sistema de Informação de Agravos de Notificação (Sinan) - atualizado em janeiro de 2025",
-        xref="paper", yref="paper",
-        x=0, y=-0.2,
-        showarrow=False,
-        font=dict(size=10, color="gray", italic=True)
+    text="<i>Fonte: Sistema de Informação de Agravos de Notificação (Sinan) - atualizado em janeiro de 2025</i>",
+    xref="paper", yref="paper",
+    x=0, y=-0.2,
+    showarrow=False,
+    font=dict(size=10, color="gray")
     )
 
     st.plotly_chart(fig_taxa, use_container_width=True)

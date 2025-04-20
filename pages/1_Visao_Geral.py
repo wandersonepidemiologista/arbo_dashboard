@@ -20,18 +20,15 @@ df["mes_ano"] = pd.to_datetime(df["dt_notific"].dt.to_period("M").astype(str))
 # --- Filtros gerais na sidebar ---
 st.sidebar.header("🎛️ Filtros")
 
-# Filtro por grupo de estudo
 estudo = st.sidebar.selectbox("Grupo", ["Todos"] + df["estudovale"].dropna().unique().tolist())
 if estudo != "Todos":
     df = df[df["estudovale"] == estudo]
 
-# Filtro por município
 municipios = df["nomedomunicipio"].dropna().unique().tolist()
 municipio_sel = st.sidebar.selectbox("Município", ["Todos"] + sorted(municipios))
 if municipio_sel != "Todos":
     df = df[df["nomedomunicipio"] == municipio_sel]
 
-# Filtro por ano (slider)
 anos = df["nu_ano"].dropna().astype(int).sort_values().unique()
 ano_min, ano_max = int(anos.min()), int(anos.max())
 ano_range = st.sidebar.slider("Período (Ano)", ano_min, ano_max, (ano_min, ano_max))
@@ -46,6 +43,40 @@ with tab1:
     serie = df.groupby(["mes_ano", "id_agravo"]).size().reset_index(name="Casos")
     fig = px.line(serie, x="mes_ano", y="Casos", color="id_agravo", markers=True)
     st.plotly_chart(fig, use_container_width=True)
+
+    # --- Taxa de Incidência por Ano e Grupo ---
+    st.markdown("### 📈 Taxa de Incidência por Ano e Grupo")
+
+    if "populacao2022" in df.columns:
+        taxa_inc = (
+            df.groupby(["nu_ano", "estudovale"], as_index=False)
+            .agg(total_casos=('estudovale', 'count'),
+                 populacao=('populacao2022', 'max'))
+        )
+        taxa_inc["taxa_arbo"] = taxa_inc.apply(
+            lambda row: (row["total_casos"] / row["populacao"]) * 100000
+            if row["populacao"] > 0 else None,
+            axis=1
+        )
+
+        fig = px.line(
+            taxa_inc,
+            x="nu_ano",
+            y="taxa_arbo",
+            color="estudovale",
+            markers=True,
+            labels={
+                "nu_ano": "Ano",
+                "taxa_arbo": "Incidência (/100.000 hab)",
+                "estudovale": "Grupo"
+            },
+            title="Taxa de Incidência de Arboviroses"
+        )
+        fig.update_layout(title_x=0.5)
+        st.plotly_chart(fig, use_container_width=True)
+
+    else:
+        st.warning("⚠️ Coluna `populacao2022` não encontrada nos dados.")
 
 # --- Aba 2: Lugar ---
 with tab2:

@@ -28,11 +28,15 @@ municipio_sel = st.sidebar.selectbox("Município", ["Todos"] + sorted(municipios
 if municipio_sel != "Todos":
     df = df[df["ID_MUNICIP"] == municipio_sel]
 
+# Garantir que NU_ANO seja inteiro
+df["NU_ANO"] = pd.to_numeric(df["NU_ANO"], errors="coerce").astype("Int64")
+
 # Período de anos
 anos = df["NU_ANO"].dropna().astype(int).sort_values().unique().tolist()
 ano_min, ano_max = min(anos), max(anos)
 intervalo = st.sidebar.slider("Intervalo de Anos", ano_min, ano_max, (ano_min, ano_max))
 df = df[(df["NU_ANO"] >= intervalo[0]) & (df["NU_ANO"] <= intervalo[1])]
+
 
 # --- HISTOGRAMA DE CASOS POR ANO E AGRAVO
 st.subheader("📊 Histograma por Ano de Notificação e Agravo")

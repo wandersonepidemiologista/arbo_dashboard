@@ -35,6 +35,55 @@ with tab1:
     linha = df.groupby(["mes_ano", "ID_AGRAVO"]).size().reset_index(name="Casos")
     fig = px.line(linha, x="mes_ano", y="Casos", color="ID_AGRAVO", markers=True)
     st.plotly_chart(fig, use_container_width=True)
+    
+    # Supondo que taxa_arbo seja um DataFrame já carregado com colunas: NU_ANO, taxa_arbo, estudo
+# taxa_arbo = pd.read_csv("seu_arquivo.csv")  # Exemplo de carregamento
+
+# Conversão explícita do ano para numérico, se necessário
+taxa_arbo['NU_ANO'] = pd.to_numeric(taxa_arbo['NU_ANO'])
+
+# Configurações de estilo
+sns.set_theme(style="whitegrid")
+
+# Criação do gráfico
+plt.figure(figsize=(10, 6))
+sns.lineplot(
+    data=taxa_arbo,
+    x="NU_ANO",
+    y="taxa_arbo",
+    hue="estudo",
+    estimator=None,
+    lw=1,
+    legend="full"
+)
+sns.scatterplot(
+    data=taxa_arbo,
+    x="NU_ANO",
+    y="taxa_arbo",
+    hue="estudo",
+    s=60,
+    legend=False
+)
+
+# Títulos e legendas
+plt.title("Taxa de Incidência de Arboviroses por Ano e Categoria de Estudo", fontsize=14, weight='normal', color='black')
+plt.xlabel("Ano", fontsize=12, color='black')
+plt.ylabel("Incidência (/100.000 hab)", fontsize=12, color='black')
+plt.xticks(sorted(taxa_arbo['NU_ANO'].unique()))
+
+# Rodapé
+plt.figtext(
+    0.01, -0.05,
+    "Fonte: Sistema de Informação de Agravos de Notificação (Sinan) - atualizado em janeiro de 2025",
+    wrap=True,
+    horizontalalignment='left',
+    fontsize=10,
+    style='italic',
+    color='gray'
+)
+
+plt.tight_layout()
+plt.show()
 
 # --- TAB LUGAR ---
 with tab2:

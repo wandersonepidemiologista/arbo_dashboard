@@ -32,60 +32,40 @@ tab1, tab2, tab3 = st.tabs(["⏳ Tempo", "🌍 Lugar", "👤 Pessoa"])
 
 # --- TAB TEMPO ---
 with tab1:
-    st.subheader("⏳ Casos por Mês e Agravo")
-    df["mes_ano"] = pd.to_datetime(df["DT_NOTIFIC"].dt.to_period("M").astype(str))
-    linha = df.groupby(["mes_ano", "ID_AGRAVO"]).size().reset_index(name="Casos")
-    fig = px.line(linha, x="mes_ano", y="Casos", color="ID_AGRAVO", markers=True)
-    st.plotly_chart(fig, use_container_width=True)
-    
-    # Supondo que taxa_arbo seja um DataFrame já carregado com colunas: NU_ANO, taxa_arbo, estudo
-# taxa_arbo = pd.read_csv("seu_arquivo.csv")  # Exemplo de carregamento
+    st.subheader("📈 Taxa de Incidência por Ano e Categoria de Estudo")
 
-# Conversão explícita do ano para numérico, se necessário
-taxa_arbo['NU_ANO'] = pd.to_numeric(taxa_arbo['NU_ANO'])
+    taxa_arbo = df.groupby(["NU_ANO", "estudo"])["ID_AGRAVO"].count().reset_index()
+    taxa_arbo.rename(columns={"ID_AGRAVO": "taxa_arbo"}, inplace=True)
 
-# Configurações de estilo
-sns.set_theme(style="whitegrid")
+    fig_taxa = px.line(
+        taxa_arbo,
+        x="NU_ANO",
+        y="taxa_arbo",
+        color="estudo",
+        markers=True,
+        title="Taxa de Incidência de Arboviroses por Ano e Categoria de Estudo",
+        labels={
+            "NU_ANO": "Ano",
+            "taxa_arbo": "Incidência (/100.000 hab)",
+            "estudo": "Estudo"
+        }
+    )
+    fig_taxa.update_layout(
+        title_font=dict(size=16),
+        margin=dict(l=40, r=40, t=80, b=40),
+        legend_title="Estudo",
+        height=500
+    )
+    fig_taxa.add_annotation(
+        text="Fonte: Sistema de Informação de Agravos de Notificação (Sinan) - atualizado em janeiro de 2025",
+        xref="paper", yref="paper",
+        x=0, y=-0.2,
+        showarrow=False,
+        font=dict(size=10, color="gray", italic=True)
+    )
 
-# Criação do gráfico
-plt.figure(figsize=(10, 6))
-sns.lineplot(
-    data=taxa_arbo,
-    x="NU_ANO",
-    y="taxa_arbo",
-    hue="estudo",
-    estimator=None,
-    lw=1,
-    legend="full"
-)
-sns.scatterplot(
-    data=taxa_arbo,
-    x="NU_ANO",
-    y="taxa_arbo",
-    hue="estudo",
-    s=60,
-    legend=False
-)
+    st.plotly_chart(fig_taxa, use_container_width=True)
 
-# Títulos e legendas
-plt.title("Taxa de Incidência de Arboviroses por Ano e Categoria de Estudo", fontsize=14, weight='normal', color='black')
-plt.xlabel("Ano", fontsize=12, color='black')
-plt.ylabel("Incidência (/100.000 hab)", fontsize=12, color='black')
-plt.xticks(sorted(taxa_arbo['NU_ANO'].unique()))
-
-# Rodapé
-plt.figtext(
-    0.01, -0.05,
-    "Fonte: Sistema de Informação de Agravos de Notificação (Sinan) - atualizado em janeiro de 2025",
-    wrap=True,
-    horizontalalignment='left',
-    fontsize=10,
-    style='italic',
-    color='gray'
-)
-
-plt.tight_layout()
-plt.show()
 
 # --- TAB LUGAR ---
 with tab2:

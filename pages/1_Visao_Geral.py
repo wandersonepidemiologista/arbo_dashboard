@@ -8,79 +8,60 @@ checar_login()
 st.set_page_config(layout="wide")
 st.title("📊 Visão Geral – Arboviroses")
 
+# --- Carregamento dos dados ---
 df = load_data("data/arbo14vale24.parquet")
-df["estudo"] = df["estudo"].replace({1: "Caso", 2: "Controle"})
-df["NU_ANO"] = pd.to_numeric(df["NU_ANO"], errors="coerce").astype("Int64")
 
-# Filtros
+# --- Ajustes de campos e tipos ---
+df["estudovale"] = df["estudovale"].replace({1: "Caso", 2: "Controle", "1": "Caso", "2": "Controle"})
+df["nu_ano"] = pd.to_numeric(df["nu_ano"], errors="coerce")
+df["dt_notific"] = pd.to_datetime(df["dt_notific"], errors="coerce")
+df["mes_ano"] = pd.to_datetime(df["dt_notific"].dt.to_period("M").astype(str))
+
+# --- Filtros gerais na sidebar ---
 st.sidebar.header("🎛️ Filtros")
-estudo = st.sidebar.selectbox("Grupo", ["Todos"] + df["estudo"].dropna().unique().tolist())
-municipio = st.sidebar.selectbox("Município", ["Todos"] + sorted(df["ID_MUNICIP"].dropna().unique().tolist()))
-anos = df["NU_ANO"].dropna().sort_values().unique()
-ano_range = st.sidebar.slider("Período (Ano)", int(anos.min()), int(anos.max()), (int(anos.min()), int(anos.max())))
 
+# Filtro por grupo de estudo
+estudo = st.sidebar.selectbox("Grupo", ["Todos"] + df["estudovale"].dropna().unique().tolist())
 if estudo != "Todos":
-    df = df[df["estudo"] == estudo]
-if municipio != "Todos":
-    df = df[df["ID_MUNICIP"] == municipio]
-df = df[df["NU_ANO"].between(ano_range[0], ano_range[1])]
+    df = df[df["estudovale"] == estudo]
 
-# Tabs
+# Filtro por município
+municipios = df["nomedomunicipio"].dropna().unique().tolist()
+municipio_sel = st.sidebar.selectbox("Município", ["Todos"] + sorted(municipios))
+if municipio_sel != "Todos":
+    df = df[df["nomedomunicipio"] == municipio_sel]
+
+# Filtro por ano (slider)
+anos = df["nu_ano"].dropna().astype(int).sort_values().unique()
+ano_min, ano_max = int(anos.min()), int(anos.max())
+ano_range = st.sidebar.slider("Período (Ano)", ano_min, ano_max, (ano_min, ano_max))
+df = df[df["nu_ano"].between(ano_range[0], ano_range[1])]
+
+# --- Abas principais ---
 tab1, tab2, tab3 = st.tabs(["⏳ Tempo", "🌍 Lugar", "👤 Pessoa"])
 
-# --- TAB TEMPO ---
+# --- Aba 1: Tempo ---
 with tab1:
-    st.subheader("📈 Taxa de Incidência por Ano e Categoria de Estudo")
-
-    taxa_arbo = df.groupby(["NU_ANO", "estudo"])["ID_AGRAVO"].count().reset_index()
-    taxa_arbo.rename(columns={"ID_AGRAVO": "taxa_arbo"}, inplace=True)
-
-    fig_taxa = px.line(
-        taxa_arbo,
-        x="NU_ANO",
-        y="taxa_arbo",
-        color="estudo",
-        markers=True,
-        title="Taxa de Incidência de Arboviroses por Ano e Categoria de Estudo",
-        labels={
-            "NU_ANO": "Ano",
-            "taxa_arbo": "Incidência (/100.000 hab)",
-            "estudo": "Estudo"
-        }
-    )
-
-    fig_taxa.update_layout(
-        title_font=dict(size=16),
-        margin=dict(l=40, r=40, t=80, b=40),
-        legend_title="Estudo",
-        height=500
-    )
-
-    fig_taxa.add_annotation(
-    text="<i>Fonte: Sistema de Informação de Agravos de Notificação (Sinan) - atualizado em janeiro de 2025</i>",
-    xref="paper", yref="paper",
-    x=0, y=-0.2,
-    showarrow=False,
-    font=dict(size=10, color="gray")
-    )
-
-    st.plotly_chart(fig_taxa, use_container_width=True)
-
-# --- TAB LUGAR ---
-with tab2:
-    st.subheader("🌍 Casos por Município")
-    lugar = df.groupby("ID_MUNICIP").size().reset_index(name="Casos").sort_values("Casos", ascending=False)
-    fig = px.bar(lugar, x="ID_MUNICIP", y="Casos")
+    st.subheader("⏳ Casos por Mês e Agravo")
+    serie = df.groupby(["mes_ano", "id_agravo"]).size().reset_index(name="Casos")
+    fig = px.line(serie, x="mes_ano", y="Casos", color="id_agravo", markers=True)
     st.plotly_chart(fig, use_container_width=True)
 
-# --- TAB PESSOA ---
+# --- Aba 2: Lugar ---
+with tab2:
+    st.subheader("🌍 Casos por Município")
+    lugar = df.groupby("nomedomunicipio").size().reset_index(name="Casos").sort_values("Casos", ascending=False)
+    fig = px.bar(lugar, x="nomedomunicipio", y="Casos", title="Distribuição por Município")
+    st.plotly_chart(fig, use_container_width=True)
+
+# --- Aba 3: Pessoa ---
 with tab3:
     st.subheader("👤 Perfil dos Casos")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        sexo = df["CS_SEXO"].value_counts().reset_index()
+        sexo = df["cs_sexo"].value_counts().reset_index()
         sexo.columns = ["Sexo", "Casos"]
         fig = px.pie(sexo, names="Sexo", values="Casos", title="Distribuição por Sexo")
         st.plotly_chart(fig, use_container_width=True)

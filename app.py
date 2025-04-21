@@ -116,17 +116,23 @@ elif pagina == "Tempo":
 elif pagina == "Lugar":
     st.title("🗺 Distribuição Espacial dos Casos")
 
-    # Agrupando os dados por municipio e estudovale, contando os anos
-    tabela_municipio_ano = df_filtered.groupby(['nomedomunicipio', 'nu_ano', 'estudovale']).size().reset_index(name="quantidade")
+    # Adicionar filtro para o grupo de estudo (estudovale)
+    grupo_estudo = st.selectbox("Selecione o Grupo de Estudo", options=df_filtered['estudovale'].unique())
 
-    # Exibir a tabela de forma interativa no Streamlit
-    st.markdown("### Tabela de Casos por Município, Ano e Grupo de Estudo")
+    # Filtrar o dataframe de acordo com o grupo de estudo selecionado
+    df_filtered_grupo = df_filtered[df_filtered['estudovale'] == grupo_estudo]
+
+    # Criar a tabela com 'nomedomunicipio' e 'nu_ano' como colunas
+    tabela_municipio_ano = df_filtered_grupo.groupby(['nomedomunicipio', 'nu_ano']).size().unstack(fill_value=0).reset_index()
+
+    # Exibir a tabela com as colunas representando 'nu_ano' e as linhas os municípios
+    st.markdown(f"### Tabela de Casos por Município e Ano - Grupo de Estudo: {grupo_estudo}")
     st.dataframe(tabela_municipio_ano)
 
-    # Criação do gráfico de barras
-    mapa = df_filtered.groupby("nomedomunicipio").size().reset_index(name="casos")
+    # Criação do gráfico de barras com o número de casos por município
+    mapa = df_filtered_grupo.groupby("nomedomunicipio").size().reset_index(name="casos")
     fig = px.bar(mapa.sort_values("casos", ascending=False), x="nomedomunicipio", y="casos", title="Casos por Município")
-    st.plotly_chart(fig, use_container_width=True)    
+    st.plotly_chart(fig, use_container_width=True)
 
 # ========= PESSOA =========
 elif pagina == "Pessoa":

@@ -145,6 +145,18 @@ elif pagina == "Pessoa":
                               title="Distribuição por Escolaridade")
     
     st.plotly_chart(fig_escolaridade, use_container_width=True)
+    
+    # Gráfico de Barras por Raça/Cor (cs_raca)
+    raca_counts = df_filtered['cs_raca'].value_counts().reset_index()
+    raca_counts.columns = ['cs_raca', 'count']
+    fig_raca = px.bar(raca_counts, 
+                      x="cs_raca", 
+                      y="count", 
+                      color="cs_raca", 
+                      title="Distribuição por Raça/Cor")
+    
+    st.plotly_chart(fig_raca, use_container_width=True)
+
 
 
 # ========= DOWNLOAD =========

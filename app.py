@@ -187,43 +187,6 @@ elif pagina == "Pessoa":
     # Exibindo o gráfico
     st.plotly_chart(fig_piramide, use_container_width=True)
 
-# Filtrando os dados para "Pós-ESP" e "Pré-ESP"
-df_esp = df_filtered[df_filtered['periodo'].isin(['Pré-ESP', 'Pós-ESP'])]
-
-# Agrupar por faixa etária, óbito e período
-piramide_obbito = df_esp.groupby(['faixa_etaria', 'classi_fin', 'periodo']).size().reset_index(name='count')
-
-# Filtrar para óbitos (classi_fin == '1.Obito') e ordenação por faixa etária
-piramide_obbito = piramide_obbito[piramide_obbito['classi_fin'] == '1.Obito']
-
-# Separar os dados antes e depois da ESP
-piramide_pre_esp = piramide_obbito[piramide_obbito['periodo'] == 'Pré-ESP']
-piramide_pos_esp = piramide_obbito[piramide_obbito['periodo'] == 'Pós-ESP']
-
-# Inverter a contagem dos óbitos para o período "Pré-ESP" para a pirâmide (para aparecer no lado esquerdo)
-piramide_pre_esp['count'] = -piramide_pre_esp['count']
-
-# Plotando o gráfico de pirâmide etária para óbitos antes e depois da ESP
-fig_piramide_obito = px.bar(piramide_pre_esp,
-                            y='faixa_etaria',
-                            x='count',
-                            color='periodo',
-                            orientation='h',
-                            title="Pirâmide Etária de Evolução de Óbitos por Faixa Etária (Antes e Depois da ESP)",
-                            labels={'count': 'Número de Óbitos', 'faixa_etaria': 'Faixa Etária'},
-                            color_discrete_map={'Pós-ESP': 'red', 'Pré-ESP': 'blue'})
-
-# Adicionando as barras para o período pós-ESP
-fig_piramide_obito.add_bar(y=piramide_pos_esp['faixa_etaria'],
-                           x=piramide_pos_esp['count'],
-                           orientation='h',
-                           name='Pós-ESP',
-                           marker_color='red')
-
-# Exibindo o gráfico
-st.plotly_chart(fig_piramide_obito, use_container_width=True)
-
-
 # ========= DOWNLOAD =========
 elif pagina == "Download":
     st.title("📥 Download dos Dados")

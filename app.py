@@ -305,7 +305,42 @@ elif pagina == "Sobre":
     st.title("📖 Sobre o Dashboard")
 
     st.markdown("""
-    Este dashboard foi desenvolvido para apresentar a análise dos dados da Emergência em Saúde Pública (ESP) de Brumadinho, com foco na avaliação do impacto do rompimento da barragem de rejeitos na saúde pública da região.  
-    O objetivo principal é fornecer uma visão abrangente sobre a situação epidemiológica, permitindo a visualização de dados ao longo do tempo, espaço e características demográficas das pessoas afetadas.
-    Além disso, o dashboard inclui análises de séries temporais interrompidas (ITS) e Diferenças em Diferenças (DiD) para avaliar o impacto das intervenções implementadas após o evento.
+    Este dashboard foi desenvolvido para apresentar a análise dos dados da **Emergência em Saúde Pública (ESP)** de Brumadinho, com foco na avaliação do impacto do rompimento da barragem de rejeitos de **Brumadinho** sobre a saúde pública da região. O evento, ocorrido em 25 de janeiro de 2019, teve profundas consequências para os municípios localizados na bacia do Rio Paraopeba, afetando diretamente a saúde da população de 26 municípios. Este dashboard visa fornecer uma visão abrangente e interativa da evolução epidemiológica das doenças na área afetada, permitindo uma análise detalhada ao longo do tempo, no espaço geográfico e nas características demográficas das pessoas impactadas.
+
+    **Objetivos:**
+    
+    O objetivo principal deste dashboard é oferecer uma análise detalhada da situação de saúde nos municípios afetados pelo rompimento da barragem, comparando-os com municípios não afetados, mas localizados nas mesmas **Regiões de Saúde** ou **Bacias Hidrográficas**. A análise é realizada para dois períodos: antes (2014–2018) e após (2019–2024) o evento de rompimento, com o intuito de:
+    
+    - Avaliar o impacto das intervenções de saúde pública implementadas após o rompimento da barragem, incluindo campanhas de controle e medidas emergenciais.
+    - Identificar padrões epidemiológicos e mudanças nas taxas de doenças relacionadas ao evento.
+    - Propor estratégias de preparação, resposta e recuperação para futuras emergências em saúde pública baseadas nos resultados observados.
+
+    **Métodos Aplicados:**
+    
+    Para avaliar o impacto da ESP na saúde da população, foram aplicados métodos quantitativos avançados de análise de dados, entre eles:
+    
+    - **Análise de Séries Temporais Interrompidas (ITS)**: Essa técnica foi utilizada para analisar as séries temporais de doenças e agravos antes e depois do rompimento da barragem. A ITS permite verificar a **mudança nas tendências** de incidência de doenças após a intervenção, controlando fatores temporais e sazonais. O modelo **Generalized Linear Model (GLM)** com **distribuição de Poisson** foi aplicado para estimar a relação entre a intervenção e a incidência de doenças ao longo do tempo, considerando o efeito do **tempo pós-intervenção**.
+    
+    - **Diferenças em Diferenças (DiD)**: A técnica de **Diferenças em Diferenças** foi utilizada para comparar os indicadores de saúde dos municípios afetados pelo rompimento com aqueles não afetados, mas situados nas mesmas regiões de saúde. O método DiD permite estimar o efeito causal da intervenção, comparando as mudanças nos resultados de saúde nos dois grupos antes e depois do evento, controlando fatores de confusão.
+    
+    Ambas as técnicas são essenciais para entender os **efeitos diretos e indiretos** da emergência em saúde pública, permitindo analisar não apenas a incidência de doenças, mas também a eficácia das intervenções implementadas.
+
+    **Desenho do Estudo:**
+    
+    **Tipo de Estudo:**
+    Diferentes metodologias serão empregadas conforme a natureza da doença, agravo ou evento de saúde pública em análise. Em alguns casos, a abordagem descritiva será a única viável, caracterizando a situação segundo tempo, espaço e características populacionais. Em outros, será possível adotar métodos como estudos ecológicos, transversais e a análise de séries temporais interrompidas (Interrupted Time Series Analysis - ITSA), ferramenta que permite avaliar mudanças de tendência antes e após um evento específico. Além disso, o método de diferenças em diferenças (Difference-in-Differences) será utilizado como estratégia complementar, comparando a evolução de indicadores entre grupos expostos (municípios afetados) e não expostos (municípios de referência), possibilitando o controle de fatores de confusão ao longo do tempo.
+
+    **Períodos Avaliados:**
+    ● Antes: janeiro de 2014 a dezembro de 2018.  
+    ● Depois: janeiro de 2019 a dezembro de 2024.  
+
+    **Grupos de Comparação:**
+    
+    Em Minas Gerais, existem 853 municípios, com uma densidade demográfica de 35,02 habitantes por quilômetro quadrado e uma população estimada de 20.539.989 habitantes no Censo de 2022. Do total de municípios, 28% (239) integram a Bacia do Rio São Francisco, onde está situado o Rio Paraopeba, atingido pelo rompimento da barragem em 25 de janeiro de 2019. Destes, 10,9% (26) municípios foram diretamente afetados e estão situados nas áreas de abrangência de 5 (cinco) Regiões de Saúde, são elas: Betim, Sete Lagoas, Curvelo, Pará de Minas/Nova Serrana e Patos de Minas, totalizando 1.075.083 de habitantes. Entre as 89 Regiões de Saúde do estado, cinco foram selecionadas por abrigarem ao menos um dos 26 municípios impactados, somando 67 municípios (26 afetados e 41 não afetados).
+
+    **Municípios afetados (n=26):**  
+    Betim, Esmeraldas, Pará de Minas, Curvelo, Igarapé, Mateus Leme, Brumadinho, São Joaquim de Bicas, Juatuba, Pompéu, Três Marias, Paraopeba, Abaeté, Mário Campos, Felixlândia, Papagaios, Caetanópolis, Morada Nova de Minas, Florestal, Maravilhas, São Gonçalo do Abaeté, São José da Varginha, Paineiras, Pequi, Fortuna de Minas, Biquinhas.
+
+    **Municípios não afetados nas mesmas regiões de saúde (n=41):**  
+    Sete Lagoas, Patos de Minas, Nova Serrana, Pitangui, Corinto, Vazante, Presidente Olegário, Lagoa Formosa, Serra do Salitre, Prudente de Morais, Igaratinga, Capim Branco, Buenópolis, Guimarânia, Cordisburgo, Inimutaba, Bonfim, Baldim, Lagamar, Varjão de Minas, Santana de Pirapama, Guarda-Mor, Inhaúma, Jequitibá, Crucilândia, Rio Manso, Conceição do Pará, Piedade dos Gerais, Funilândia, Augusto de Lima, Cachoeira da Prata, Presidente Juscelino, Cruzeiro da Fortaleza, Quartel Geral, Leandro Ferreira, Onça de Pitangui, Morro da Garça, Santo Hipólito, Araçaí, Monjolos, Cedro do Abaeté.
     """)

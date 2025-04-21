@@ -73,8 +73,11 @@ if df_filtered.empty:
     st.stop()
 
 # ========= NAVEGAÇÃO =========
-paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "Download", "ITS / DiD"]
-pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
+# Lista de páginas com ícones
+paginas = ["🏠 Visão Geral", "⏳ Tempo", "📍 Lugar", "🧍 Pessoa", "📂 Download", "📊 ITS / DiD"]
+
+# Usando Selectbox para uma navegação mais compacta
+pagina = st.selectbox("Escolha uma aba", paginas)
 
 # ========= VISÃO GERAL =========
 if pagina == "Visão Geral":

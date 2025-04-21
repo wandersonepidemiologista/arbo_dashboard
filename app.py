@@ -132,9 +132,6 @@ elif pagina == "Pessoa":
                                      category_orders={"faixa_etaria": faixa_etaria_order}), 
                         use_container_width=True)
 
-    # Gráfico de Pizza por Raça/Cor
-    st.plotly_chart(px.pie(df_filtered, names='cs_raca', title='Distribuição por Raça/Cor'), use_container_width=True)
-
     # Gráfico de Barras por Escolaridade (cs_escol_n)
     escolaridade_counts = df_filtered['cs_escol_n'].value_counts().reset_index()
     escolaridade_counts.columns = ['cs_escol_n', 'count']

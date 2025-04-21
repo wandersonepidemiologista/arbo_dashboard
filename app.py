@@ -105,6 +105,13 @@ elif pagina == "Tempo":
     fig = px.bar(df_filtered.groupby(['nu_ano', 'classi_fin']).size().reset_index(name='casos'),
                   x='nu_ano', y='casos', color='classi_fin', title="Série Temporal de Casos por Ano")
     st.plotly_chart(fig, use_container_width=True)
+    with st.expander("SAIBA+"):
+    st.write('''
+        O rompimento da barragem ocorreu em janeiro de 2019. Se você selecionar o Período ***Pré-ESP***, significa que verá
+        o período de 2014 a 2018, antes do rompimento. Se selecionar o Período ***Pós-ESP***, verá o período de 2019 a 2024.
+        O gráfico mostra a série temporal de casos confirmados por ano e tipo de agravo. Você pode observar a evolução dos casos ao longo do tempo.
+        O gráfico de barras apresenta a contagem de casos confirmados por ano, permitindo uma análise visual clara da tendência temporal.
+    ''')
 
 # ========= LUGAR =========
 elif pagina == "Lugar":

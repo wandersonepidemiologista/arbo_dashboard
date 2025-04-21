@@ -196,7 +196,7 @@ elif pagina == "Download":
 
 # ========= ITS / DiD =========
 elif pagina == "ITS / DiD":
-    st.title("📈 ITS e Diferenças em Diferenças (DiD)")
+    st.title("📈 ITS (Interrupted Time Series Analysis) e Diferenças em Diferenças (DiD)")
     agravo_focus = st.selectbox("Selecione o Agravo", df_filtered['classi_fin'].unique())
     df_model = df_filtered[df_filtered['classi_fin'] == agravo_focus].copy()
 
@@ -208,7 +208,7 @@ elif pagina == "ITS / DiD":
     df_model['tempo_pos'] = df_model['tempo'] * df_model['intervencao']
     
     # Modelo GLM Poisson
-    st.markdown("#### ITS com GLM (Poisson) por Semana Epidemiológica")
+    st.markdown("#### ITS com GLM (Generalized Linear Model) Poisson por Semana Epidemiológica")
     glm_model = smf.glm("casos ~ tempo + intervencao + tempo_pos", data=df_model, family=sm.families.Poisson()).fit()
     st.write(glm_model.summary())
 

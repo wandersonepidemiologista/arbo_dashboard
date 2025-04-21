@@ -132,6 +132,9 @@ elif pagina == "Pessoa":
                                      category_orders={"faixa_etaria": faixa_etaria_order}), 
                         use_container_width=True)
 
+    # Gráfico de Pizza por Raça/Cor
+    st.plotly_chart(px.pie(df_filtered, names='cs_raca', title='Distribuição por Raça/Cor'), use_container_width=True)
+
     # Gráfico de Barras por Escolaridade (cs_escol_n)
     escolaridade_counts = df_filtered['cs_escol_n'].value_counts().reset_index()
     escolaridade_counts.columns = ['cs_escol_n', 'count']
@@ -153,6 +156,37 @@ elif pagina == "Pessoa":
                       title="Distribuição por Raça/Cor")
     
     st.plotly_chart(fig_raca, use_container_width=True)
+
+    # Criando a Pirâmide Etária com Sexo
+    piramide_etaria = df_filtered.groupby(['faixa_etaria', 'cs_sexo']).size().reset_index(name='count')
+    
+    # Agora, vamos dividir o sexo em duas colunas para fazer a pirâmide
+    piramide_etaria_masculino = piramide_etaria[piramide_etaria['cs_sexo'] == '2.Masculino']
+    piramide_etaria_feminino = piramide_etaria[piramide_etaria['cs_sexo'] == '1.Feminino']
+    
+    # Inverter a contagem dos homens para ficar no lado esquerdo da pirâmide
+    piramide_etaria_masculino['count'] = -piramide_etaria_masculino['count']
+    
+    # Plotando o gráfico
+    fig_piramide = px.bar(piramide_etaria_masculino,
+                          y='faixa_etaria',
+                          x='count',
+                          color='cs_sexo',
+                          orientation='h',
+                          title="Pirâmide Etária por Sexo",
+                          labels={'count': 'Número de Pessoas', 'faixa_etaria': 'Faixa Etária'},
+                          color_discrete_map={'2.Masculino': 'blue', '1.Feminino': 'red'})
+    
+    # Adicionando as barras femininas do lado direito
+    fig_piramide.add_bar(y=piramide_etaria_feminino['faixa_etaria'],
+                         x=piramide_etaria_feminino['count'],
+                         orientation='h',
+                         name='Feminino',
+                         marker_color='red')
+    
+    # Exibindo o gráfico
+    st.plotly_chart(fig_piramide, use_container_width=True)
+
 
 
 

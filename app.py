@@ -228,7 +228,11 @@ elif pagina == "ITS / DiD":
         A análise de séries temporais interrompidas (ITS) utilizando o **modelo GLM Poisson** para os casos de **chikungunya confirmado** revela que o **rompimento da barragem** teve um impacto significativo na redução dos casos da doença. O coeficiente negativo para a variável **rompimento da barragem** (-0.7287) indica que o evento foi eficaz em reduzir a incidência de casos, com um valor de p (0.006) confirmando sua significância estatística. A variável **tempo** não apresentou um efeito significativo (coeficiente de -0.0022 e p = 0.482), sugerindo que a tendência natural dos casos de chikungunya não foi alterada ao longo do tempo antes do rompimento. No entanto, o coeficiente positivo e significativo para **tempo pós-rompimento da barragem** (0.0202, p < 0.001) sugere que, após o evento, houve um aumento considerável nos casos, o que pode indicar a necessidade de ações contínuas ou aprimoramento nas estratégias de controle. O modelo apresenta um **pseudo R-quadrado de 1.000**, indicando que o modelo ajusta bem os dados.
         """)
 
-
+    # Criando o expander com a explicação do modelo GLM Poisson para casos de dengue
+    with st.expander("Interpretação do Modelo GLM Poisson para Dengue", expanded=True, icon="📊"):
+        st.markdown("""
+        *A análise utilizando o modelo GLM Poisson para os casos de dengue revelou que o **rompimento da barragem** teve um impacto significativo na redução dos casos de dengue, evidenciado pelo coeficiente negativo da intervenção (-1.0123), indicando uma redução substancial nos casos durante o período da intervenção, com alta significância estatística (p < 0.001). Além disso, a variável **tempo** mostrou um efeito negativo (-0.0058), sugerindo uma diminuição contínua no número de casos ao longo do tempo, antes da intervenção. No entanto, o coeficiente positivo para **tempo pós-intervenção** (0.0087) indica que, após a intervenção, houve um aumento no número de casos, sugerindo que os efeitos da intervenção podem ter sido temporários ou que o controle foi insuficiente para evitar a reincidência. O modelo ajustou bem os dados, com um pseudo R-quadrado de 1.000, indicando que as variáveis explicativas foram adequadas para modelar a incidência de dengue durante o período analisado.*
+        """)
 
 
     # Previsão com Intervalo de Confiança

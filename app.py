@@ -206,6 +206,16 @@ elif pagina == "ITS / DiD":
     df_model['intervencao'] = (df_model['semana'] >= '2019-01-28').astype(int)
     df_model['tempo'] = range(1, len(df_model)+1)
     df_model['tempo_pos'] = df_model['tempo'] * df_model['intervencao']
+    
+    # Expander com mais conteúdo e ícone
+    with st.expander("Detalhes sobre o modelo GLM Poisson", expanded=True, icon="📊"):
+        st.write("A explicação detalhada dos coeficientes do modelo é a seguinte:")
+        st.markdown("""
+        - **Intercepto:** O valor base do modelo.
+        - **Tempo:** Indica a mudança na incidência de casos ao longo do tempo.
+        - **Intervenção:** Mostra o impacto das intervenções na redução dos casos de dengue.
+        - **Tempo pós-intervenção:** Efeito observado após a implementação de intervenções.
+        """)
 
     # Modelo GLM Poisson
     st.markdown("#### ITS com GLM (Poisson) por Semana Epidemiológica")

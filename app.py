@@ -321,3 +321,4 @@ elif pagina == "Sobre":
     if readme_conteudo:
         with st.expander("Clique para ver o README"):
             st.markdown(readme_conteudo)
+

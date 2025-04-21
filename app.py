@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from utils.data_loader import load_data
+import os
 
 # --- Login simples com st.secrets ---
 def login():
@@ -44,7 +45,10 @@ def load_data_cached():
 df = load_data_cached()
 
 # ========= SIDEBAR COM FILTROS =========
+# Defina o caminho absoluto
+logo_path = os.path.join(os.getcwd(), 'data', 'logo.png')
 st.sidebar.image("data/logo.png", width=200)
+
 st.sidebar.title("🔍 Filtros")
 st.sidebar.markdown("Selecione os filtros desejados para a análise.")
 estudo_sel = st.sidebar.multiselect("Grupo (caso/controle)", options=df['estudovale'].dropna().unique(), default=df['estudovale'].dropna().unique())

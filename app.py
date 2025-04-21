@@ -49,6 +49,7 @@ df = load_data_cached()
 logo_path = os.path.join(os.getcwd(), 'data', 'logo.png')  # Caminho da logo
 st.sidebar.image(logo_path, width=200)  # Exibe a logo no sidebar
 st.sidebar.title("🔐 Acesso Restrito")
+st.sidebar.title("📊 Navegação")
 st.sidebar.markdown("Selecione os filtros desejados para a análise.")
 estudo_sel = st.sidebar.multiselect("Grupo (caso/controle)", options=df['estudovale'].dropna().unique(), default=df['estudovale'].dropna().unique())
 periodo_sel = st.sidebar.multiselect("Período", options=df['periodo'].unique(), default=df['periodo'].unique())
@@ -79,7 +80,6 @@ if df_filtered.empty:
 
 # Navegação do Streamlit
 paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "ITS / DiD", "Download", "Sobre"]
-st.sidebar.title("📊 Navegação")
 pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
 
 # ========= VISÃO GERAL =========

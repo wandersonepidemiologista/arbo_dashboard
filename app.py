@@ -200,6 +200,16 @@ elif pagina == "ITS / DiD":
     agravo_focus = st.selectbox("Selecione o Agravo", df_filtered['classi_fin'].unique())
     df_model = df_filtered[df_filtered['classi_fin'] == agravo_focus].copy()
 
+    # Expander com mais conteúdo e ícone
+    with st.expander("Detalhes sobre o modelo GLM Poisson", expanded=True, icon="📊"):
+        st.write("A explicação detalhada dos coeficientes do modelo é a seguinte:")
+        st.markdown("""
+        - **Intercepto:** O valor base do modelo.
+        - **Tempo:** Indica a mudança na incidência de casos ao longo do tempo.
+        - **Intervenção:** Mostra o impacto das intervenções na redução dos casos de dengue.
+        - **Tempo pós-intervenção:** Efeito observado após a implementação de intervenções.
+        """)
+
     df_model['semana'] = pd.to_datetime(df_model['dt_notific'])
     df_model = df_model.set_index('semana')
     df_model = df_model.resample('W-MON').size().reset_index(name='casos')
@@ -211,16 +221,13 @@ elif pagina == "ITS / DiD":
     st.markdown("#### ITS com GLM (Generalized Linear Model) Poisson por Semana Epidemiológica")
     glm_model = smf.glm("casos ~ tempo + intervencao + tempo_pos", data=df_model, family=sm.families.Poisson()).fit()
     st.write(glm_model.summary())
+    # Criando o expander com a explicação do modelo GLM Poisson por Semana Epidemiológica
+with st.expander("Interpretação do Modelo GLM Poisson para Chikungunya Confirmado", expanded=True, icon="📊"):
+    st.markdown("""
+    A análise de séries temporais interrompidas (ITS) utilizando o **modelo GLM Poisson** para os casos de **chikungunya confirmado** revela que o **rompimento da barragem** teve um impacto significativo na redução dos casos da doença. O coeficiente negativo para a variável **rompimento da barragem** (-0.7287) indica que o evento foi eficaz em reduzir a incidência de casos, com um valor de p (0.006) confirmando sua significância estatística. A variável **tempo** não apresentou um efeito significativo (coeficiente de -0.0022 e p = 0.482), sugerindo que a tendência natural dos casos de chikungunya não foi alterada ao longo do tempo antes do rompimento. No entanto, o coeficiente positivo e significativo para **tempo pós-rompimento da barragem** (0.0202, p < 0.001) sugere que, após o evento, houve um aumento considerável nos casos, o que pode indicar a necessidade de ações contínuas ou aprimoramento nas estratégias de controle. O modelo apresenta um **pseudo R-quadrado de 1.000**, indicando que o modelo ajusta bem os dados.
+    """)
 
-    # Expander com mais conteúdo e ícone
-    with st.expander("Detalhes sobre o modelo GLM Poisson", expanded=True, icon="📊"):
-        st.write("A explicação detalhada dos coeficientes do modelo é a seguinte:")
-        st.markdown("""
-        - **Intercepto:** O valor base do modelo.
-        - **Tempo:** Indica a mudança na incidência de casos ao longo do tempo.
-        - **Intervenção:** Mostra o impacto das intervenções na redução dos casos de dengue.
-        - **Tempo pós-intervenção:** Efeito observado após a implementação de intervenções.
-        """)
+
 
 
     # Previsão com Intervalo de Confiança
@@ -231,11 +238,7 @@ elif pagina == "ITS / DiD":
     df_model['ic_inferior'] = pred_summary['mean_ci_lower']
     df_model['ic_superior'] = pred_summary['mean_ci_upper']
 
-# Criando o expander com a explicação do modelo GLM Poisson por Semana Epidemiológica
-with st.expander("Interpretação do Modelo GLM Poisson para Chikungunya Confirmado", expanded=True, icon="📊"):
-    st.markdown("""
-    A análise de séries temporais interrompidas (ITS) utilizando o **modelo GLM Poisson** para os casos de **chikungunya confirmado** revela que o **rompimento da barragem** teve um impacto significativo na redução dos casos da doença. O coeficiente negativo para a variável **rompimento da barragem** (-0.7287) indica que o evento foi eficaz em reduzir a incidência de casos, com um valor de p (0.006) confirmando sua significância estatística. A variável **tempo** não apresentou um efeito significativo (coeficiente de -0.0022 e p = 0.482), sugerindo que a tendência natural dos casos de chikungunya não foi alterada ao longo do tempo antes do rompimento. No entanto, o coeficiente positivo e significativo para **tempo pós-rompimento da barragem** (0.0202, p < 0.001) sugere que, após o evento, houve um aumento considerável nos casos, o que pode indicar a necessidade de ações contínuas ou aprimoramento nas estratégias de controle. O modelo apresenta um **pseudo R-quadrado de 1.000**, indicando que o modelo ajusta bem os dados.
-    """)
+
 
 
 

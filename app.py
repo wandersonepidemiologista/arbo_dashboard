@@ -119,10 +119,7 @@ elif pagina == "Pessoa":
     col1, col2 = st.columns(2)
     with col1:
         st.plotly_chart(px.pie(df_filtered, names='cs_sexo', title='Distribuição por Sexo'), use_container_width=True)
-        st.plotly_chart(px.bar(df_filtered,
-                               x="cs_escolaridade",
-                               color="classi_fin",
-                               title="Distribuição por Escolaridade")
+        st.plotly_chart(px.bar(df_filtered, x="cs_escolaridade", color="classi_fin", title="Distribuição por Escolaridade")
     with col2:
         # Ordenando as faixas etárias de forma crescente (ajustando para a ordem)
         faixa_etaria_order = sorted(df_filtered['faixa_etaria'].unique())  # Ajuste conforme necessário

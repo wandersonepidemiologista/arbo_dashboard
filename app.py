@@ -207,6 +207,11 @@ elif pagina == "ITS / DiD":
     df_model['tempo'] = range(1, len(df_model)+1)
     df_model['tempo_pos'] = df_model['tempo'] * df_model['intervencao']
     
+    # Modelo GLM Poisson
+    st.markdown("#### ITS com GLM (Poisson) por Semana Epidemiológica")
+    glm_model = smf.glm("casos ~ tempo + intervencao + tempo_pos", data=df_model, family=sm.families.Poisson()).fit()
+    st.write(glm_model.summary())
+
     # Expander com mais conteúdo e ícone
     with st.expander("Detalhes sobre o modelo GLM Poisson", expanded=True, icon="📊"):
         st.write("A explicação detalhada dos coeficientes do modelo é a seguinte:")
@@ -217,10 +222,6 @@ elif pagina == "ITS / DiD":
         - **Tempo pós-intervenção:** Efeito observado após a implementação de intervenções.
         """)
 
-    # Modelo GLM Poisson
-    st.markdown("#### ITS com GLM (Poisson) por Semana Epidemiológica")
-    glm_model = smf.glm("casos ~ tempo + intervencao + tempo_pos", data=df_model, family=sm.families.Poisson()).fit()
-    st.write(glm_model.summary())
 
     # Previsão com Intervalo de Confiança
     st.markdown("#### Previsão com Intervalo de Confiança")
@@ -237,6 +238,8 @@ elif pagina == "ITS / DiD":
     fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['ic_inferior'], mode='lines', fill='tonexty', line=dict(width=0), name='IC Inf', showlegend=False))
     fig_its.update_layout(title=f"ITS – {agravo_focus} (GLM Poisson + IC95%)", xaxis_title='Data', yaxis_title='Casos')
     st.plotly_chart(fig_its, use_container_width=True)
+
+
 
     st.markdown("---")
     st.markdown("#### Diferenças em Diferenças (DiD)")

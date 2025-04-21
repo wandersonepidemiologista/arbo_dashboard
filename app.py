@@ -76,8 +76,14 @@ if df_filtered.empty:
     st.stop()
 
 # ========= NAVEGAÇÃO =========
-paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "Download", "ITS / DiD"]
+
+# Navegação do Streamlit
+paginas = ["👁️ Visão Geral", "⌛Tempo", "🗺️Lugar", "👤Pessoa", "📥Download", "🧮ITS / DiD", "💡Interpretação"]
 pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
+
+# Mostrar a interpretação quando o usuário escolher a aba de interpretação
+if pagina == "Interpretação":
+    mostrar_interpretacao()
 
 # ========= VISÃO GERAL =========
 if pagina == "Visão Geral":
@@ -242,3 +248,34 @@ elif pagina == "ITS / DiD":
 
     fig_did = px.line(df_did, x="ano", y="casos", color=df_did['grupo'].map({1: "Caso", 0: "Controle"}), title=f"Casos Anuais - {agravo_focus} (Comparação Caso vs Controle)")
     st.plotly_chart(fig_did, use_container_width=True)
+
+# Função para mostrar a interpretação do modelo
+def mostrar_interpretacao():
+    st.title("📊 Interpretação dos Resultados do Modelo GLM (Poisson) - Dengue")
+    
+    st.markdown("""
+    ## Resumo do Modelo GLM Poisson
+
+    O modelo GLM Poisson foi ajustado para entender como as variáveis **tempo**, **intervenção** e **tempo pós-intervenção** influenciam o número de casos de **dengue** ao longo do tempo. A seguir, detalhamos a interpretação de cada variável do modelo:
+
+    ### 1. **Intercepto (coef = 6.7247):**
+    - O **intercepto** é o valor base do modelo, que corresponde ao logaritmo da expectativa do número de casos de dengue quando as outras variáveis (tempo, intervenção e tempo pós-intervenção) são zero. Esse valor é altamente significativo, com um valor p muito baixo (< 0.001).
+
+    ### 2. **Tempo (coef = -0.0058):**
+    - O coeficiente para **tempo** é negativo (-0.0058), indicando que **com o aumento do tempo**, o número de casos de dengue diminui **exponencialmente**. Isso pode ser interpretado como uma redução na incidência de casos ao longo do tempo, possivelmente devido ao controle de surtos.
+
+    ### 3. **Intervenção (coef = -1.0123):**
+    - O coeficiente para a **intervenção** é negativo (-1.0123), o que sugere que a **intervenção** (medidas de controle, como fumos e campanhas de prevenção) tem um impacto significativo e **reduz o número de casos de dengue**. Este efeito é muito forte e altamente significativo.
+
+    ### 4. **Tempo pós-intervenção (coef = 0.0087):**
+    - O coeficiente para **tempo pós-intervenção** é positivo (0.0087), indicando que após a intervenção, o número de casos de dengue tende a **aumentar ao longo do tempo**. Isso pode ser um sinal de que as intervenções não estão sendo sustentadas ou que há efeitos residuais que causam aumento nos casos após o período de controle.
+
+    ### 5. **Significância Global do Modelo:**
+    - O modelo apresenta um **pseudo R-quadrado (CS) de 1.000**, indicando que o modelo explica quase toda a variação nos casos de dengue.
+    - O **log-likelihood** (-6.0276e+05) e a **deviance** (1.2017e+06) mostram uma boa adequação do modelo, e o **valor p** de todas as variáveis é muito baixo, confirmando a robustez dos resultados.
+
+    ## Conclusões:
+    - **Eficácia das intervenções:** As intervenções reduzem significativamente os casos de dengue, mas é necessário **manter o controle** a longo prazo para evitar o aumento de casos após a intervenção.
+    - **Importância do tempo:** A redução dos casos ao longo do tempo sugere que as intervenções têm um efeito positivo, mas o **efeito pós-intervenção** indica a necessidade de estratégias contínuas de controle.
+    - Esse modelo pode ajudar a **informar políticas de saúde pública**, destacando a importância de intervenções constantes no controle da dengue.
+    """)

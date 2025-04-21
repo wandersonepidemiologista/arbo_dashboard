@@ -269,6 +269,10 @@ elif pagina == "ITS / DiD":
     df_did['pos_esp'] = (df_did['ano'] >= 2019).astype(int)
     df_did['did'] = df_did['grupo'] * df_did['pos_esp']
 
+    model_did = sm.OLS(df_did['casos'], sm.add_constant(df_did[['grupo', 'pos_esp', 'did']])).fit()
+    st.subheader("Resultados do Modelo DiD")
+    st.write(model_did.summary())
+
     # Criando o expander com a explicação do modelo DiD para Chikungunya
     with st.expander("Interpretação do Modelo Diferenças em Diferenças (DiD) para Chikungunya", expanded=True, icon="📉"):
         st.markdown("""
@@ -290,10 +294,6 @@ elif pagina == "ITS / DiD":
         """)
 
 
-
-    model_did = sm.OLS(df_did['casos'], sm.add_constant(df_did[['grupo', 'pos_esp', 'did']])).fit()
-    st.subheader("Resultados do Modelo DiD")
-    st.write(model_did.summary())
 
     fig_did = px.line(df_did, x="ano", y="casos", color=df_did['grupo'].map({1: "Caso", 0: "Controle"}), title=f"Casos Anuais - {agravo_focus} (Comparação Caso vs Controle)")
     st.plotly_chart(fig_did, use_container_width=True)

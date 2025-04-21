@@ -249,10 +249,6 @@ elif pagina == "ITS / DiD":
     df_model['ic_superior'] = pred_summary['mean_ci_upper']
 
 
-
-
-
-
     fig_its = go.Figure()
     fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['casos'], mode='lines+markers', name='Observado'))
     fig_its.add_trace(go.Scatter(x=df_model['semana'], y=df_model['preditos'], mode='lines', name='Predito'))
@@ -272,6 +268,28 @@ elif pagina == "ITS / DiD":
     df_did = df_did.groupby(['ano', 'grupo']).agg({'casos':'sum'}).reset_index()
     df_did['pos_esp'] = (df_did['ano'] >= 2019).astype(int)
     df_did['did'] = df_did['grupo'] * df_did['pos_esp']
+
+    # Criando o expander com a explicação do modelo DiD para Chikungunya
+    with st.expander("Interpretação do Modelo Diferenças em Diferenças (DiD) para Chikungunya", expanded=True, icon="📉"):
+        st.markdown("""
+        *A análise utilizando o modelo de **Diferenças em Diferenças (DiD)** para os casos de **chikungunya** revelou que, em termos gerais, o modelo tem um **R-quadrado de 0.130**, indicando que as variáveis explicativas conseguem explicar apenas 13% da variação nos casos de chikungunya. O coeficiente **constante** de 7.0000 sugere que, antes da intervenção, a taxa base de casos de chikungunya foi muito baixa, com uma **alta variabilidade** (p = 0.998). A variável **grupo** apresentou um coeficiente de 4.0000, mas também não foi significativa (p = 0.999), indicando que a diferença entre os grupos **caso** e **controle** não teve um impacto expressivo nos resultados. O coeficiente para **pos_esp** (4970.3333) foi positivo, mas com valor p de 0.257, indicando que, após o evento, a tendência de aumento nos casos não foi estatisticamente significativa. A variável **did** (interação entre grupo e pós-intervenção) teve um coeficiente negativo de -2524.0000, mas também não foi estatisticamente significativa (p = 0.678), sugerindo que a intervenção não teve um efeito significativo no aumento dos casos de chikungunya nos grupos em questão. O modelo apresenta uma **significância global baixa**, com o **F-statistic de 0.6975** e **p = 0.569**, o que indica que as variáveis explicativas não explicam bem a variabilidade nos casos de chikungunya.*
+        """)
+
+
+    # Criando o expander com a explicação do modelo DiD para Dengue
+    with st.expander("Interpretação do Modelo Diferenças em Diferenças (DiD) para Dengue", expanded=True, icon="📉"):
+        st.markdown("""
+        *A análise utilizando o modelo de **Diferenças em Diferenças (DiD)** para os casos de **dengue** revelou que, em termos gerais, o modelo tem um **R-quadrado de 0.143**, indicando que as variáveis explicativas conseguem explicar apenas 14.3% da variação nos casos de dengue. O coeficiente **constante** de 6636.8000 sugere que, antes da intervenção, a taxa base de casos de dengue foi significativa, mas com uma **alta variabilidade** (p = 0.600). A variável **grupo** apresentou um coeficiente de 9063.0000, mas também não foi significativa (p = 0.613), indicando que a diferença entre os grupos **caso** e **controle** não teve um impacto expressivo nos resultados. O coeficiente para **pos_esp** (1.471e+04) foi positivo, mas com valor p de 0.394, indicando que, após o evento, a tendência de aumento nos casos não foi estatisticamente significativa. A variável **did** (interação entre grupo e pós-intervenção) teve um coeficiente positivo de 4520.1667, mas também não foi estatisticamente significativa (p = 0.852), sugerindo que a intervenção não teve um efeito significativo no aumento dos casos de dengue. O modelo apresenta uma **significância global baixa**, com o **F-statistic de 1.005** e **p = 0.414**, o que indica que as variáveis explicativas não explicam bem a variabilidade nos casos de dengue.*
+        """)
+
+
+    # Criando o expander com a explicação do modelo DiD para Zika
+    with st.expander("Interpretação do Modelo Diferenças em Diferenças (DiD) para Zika", expanded=True, icon="📉"):
+        st.markdown("""
+        *A análise utilizando o modelo de **Diferenças em Diferenças (DiD)** para os casos de **Zika** revelou que, em termos gerais, o modelo tem um **R-quadrado de 0.420**, indicando que as variáveis explicativas conseguem explicar cerca de 42% da variação nos casos de Zika. O coeficiente **constante** de 171.0000 sugere que, antes da intervenção, a taxa base de casos era significativa, com uma significância estatística de p = 0.023. A variável **grupo** teve um coeficiente negativo (-131.6667) e não foi estatisticamente significativa (p = 0.133), indicando que a diferença entre os grupos **caso** e **controle** não foi suficientemente expressiva para influenciar os resultados. O coeficiente **pos_esp** (-168.0000), com valor p de 0.055, sugere que, após o evento de intervenção, houve uma tendência à redução nos casos de Zika, embora essa redução não tenha sido considerada totalmente significativa ao nível de 5%. A variável **did** (interação entre grupo e pós-intervenção) teve um coeficiente positivo (135.6667), mas não foi estatisticamente significativa (p = 0.223), sugerindo que a intervenção não teve um efeito estatisticamente significativo no aumento dos casos de Zika nos grupos em questão. O modelo apresenta uma **significância global baixa**, com o **F-statistic de 1.930** e **p = 0.203**, o que indica que as variáveis explicativas não explicam completamente a variabilidade nos casos de Zika.*
+        """)
+
+
 
     model_did = sm.OLS(df_did['casos'], sm.add_constant(df_did[['grupo', 'pos_esp', 'did']])).fit()
     st.subheader("Resultados do Modelo DiD")

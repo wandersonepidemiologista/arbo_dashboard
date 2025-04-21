@@ -102,7 +102,7 @@ if pagina == "Visão Geral":
 # ========= TEMPO =========
 elif pagina == "Tempo":
     st.title("⏳ Análise Temporal")
-    fig = px.line(df_filtered.groupby(['nu_ano', 'classi_fin']).size().reset_index(name='casos'),
+    fig = px.bar(df_filtered.groupby(['nu_ano', 'classi_fin']).size().reset_index(name='casos'),
                   x='nu_ano', y='casos', color='classi_fin', title="Série Temporal de Casos por Ano")
     st.plotly_chart(fig, use_container_width=True)
 

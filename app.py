@@ -298,3 +298,26 @@ elif pagina == "ITS / DiD":
 
     fig_did = px.line(df_did, x="ano", y="casos", color=df_did['grupo'].map({1: "Caso", 0: "Controle"}), title=f"Casos Anuais - {agravo_focus} (Comparação Caso vs Controle)")
     st.plotly_chart(fig_did, use_container_width=True)
+
+# ========= SOBRE =========
+
+elif pagina == "Sobre":
+    st.title("📖 Sobre o Dashboard")
+
+    # Função para carregar o conteúdo do README.md
+    def carregar_readme():
+        try:
+            # Caminho completo do arquivo README.md
+            with open(r'D:\github\arbo_dashboard\README.md', 'r', encoding='utf-8') as file:
+                return file.read()
+        except FileNotFoundError:
+            st.error("Arquivo README.md não encontrado.")
+            return ""
+
+    # Exibir o conteúdo do README.md
+    readme_conteudo = carregar_readme()
+
+    # Adicionar o conteúdo ao Streamlit usando st.markdown
+    if readme_conteudo:
+        with st.expander("Clique para ver o README"):
+            st.markdown(readme_conteudo)

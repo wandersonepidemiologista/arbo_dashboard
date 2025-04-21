@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
 import plotly.graph_objects as go
 from utils.data_loader import load_data
 
@@ -73,8 +71,9 @@ if df_filtered.empty:
     st.stop()
 
 # ========= NAVEGAÇÃO =========
+# Modificando a navegação para as abas na parte superior
 paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "Download", "ITS / DiD"]
-pagina = st.sidebar.radio("Navegação", paginas)
+pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
 
 # ========= VISÃO GERAL =========
 if pagina == "Visão Geral":
@@ -90,7 +89,7 @@ if pagina == "Visão Geral":
     st.markdown("---")
     st.markdown("### 📊 Tabela Síntese de Casos confirmados por Doença e Grupo de Estudo (com %)")
     df_filtered["estudo"] = df_filtered["estudo"].replace({1: "Caso", 2: "Controle"})
-    tabela = df_filtered.groupby(["ID_AGRAVO", "estudo"]).size().unstack(fill_value=0)
+    tabela = df_filtered.groupby(["id_agravo", "estudo"]).size().unstack(fill_value=0)
     for col in ["Caso", "Controle"]:
         if col not in tabela.columns:
             tabela[col] = 0
@@ -177,6 +176,5 @@ elif pagina == "ITS / DiD":
     st.subheader("Resultados do Modelo DiD")
     st.write(model_did.summary())
 
-    fig_did = px.line(df_did, x="ano", y="casos", color=df_did['grupo'].map({1: "Caso", 0: "Controle"}),
-                      title=f"Casos Anuais - {agravo_focus} (Comparação Caso vs Controle)")
+    fig_did = px.line(df_did, x="ano", y="casos", color=df_did['grupo'].map({1: "Caso", 0: "Controle"}), title=f"Casos Anuais - {agravo_focus} (Comparação Caso vs Controle)")
     st.plotly_chart(fig_did, use_container_width=True)

@@ -123,6 +123,8 @@ elif pagina == "Lugar":
     df_filtered_grupo = df_filtered[df_filtered['estudovale'] == grupo_estudo]
 
     # Carregar a população de 2022 dos municípios (você deve ter essa informação em algum lugar)
+    # Vamos supor que você tenha um DataFrame chamado `populacao_2022` com as colunas 'nomedomunicipio' e 'populacao2022'.
+    # Caso contrário, você precisará ajustar o código com a fonte da população.
     populacao_2022 = {
         'Betim': 436000, 'Esmeraldas': 73000, 'Pará de Minas': 110000, 'Curvelo': 70000, # Exemplo de valores
         'Igarapé': 40000, 'Mateus Leme': 50000, 'Brumadinho': 38000, 'São Joaquim de Bicas': 25000, # e assim por diante
@@ -130,40 +132,31 @@ elif pagina == "Lugar":
     }
 
     # Função para calcular a taxa de incidência
-    def calcular_taxa_incidencia(df, populacao):
+    def calcular_tx_inc(df, populacao):
         # Agrupar por município e ano, contando o número de casos
         tabela_municipio_ano = df.groupby(['nomedomunicipio', 'nu_ano']).size().unstack(fill_value=0).reset_index()
-
+        
         # Adicionar a população de 2022 para cada município
         tabela_municipio_ano['populacao2022'] = tabela_municipio_ano['nomedomunicipio'].map(populacao)
-
+        
         # Calcular a taxa de incidência por 100.000 habitantes
         for ano in range(df['nu_ano'].min(), df['nu_ano'].max() + 1):
             if ano in tabela_municipio_ano.columns:
-                tabela_municipio_ano[f'taxa_incidencia_{ano}'] = (tabela_municipio_ano[ano] / tabela_municipio_ano['populacao2022']) * 100000
-
-        # Retirar as colunas intermediárias de 'nu_ano' e 'populacao2022'
-        tabela_municipio_ano = tabela_municipio_ano.drop(columns=['populacao2022'] + [str(ano) for ano in range(df['nu_ano'].min(), df['nu_ano'].max() + 1)])
-
+                tabela_municipio_ano[f'tx_inc{ano}'] = (tabela_municipio_ano[ano] / tabela_municipio_ano['populacao2022']) * 100000
+        
         return tabela_municipio_ano
 
     # Calcular a tabela com as taxas de incidência
-    tabela_taxa_incidencia = calcular_taxa_incidencia(df_filtered_grupo, populacao_2022)
-
-    # Verificar se todos os municípios foram calculados
-    municipios_faltantes = set(df_filtered_grupo['nomedomunicipio'].unique()) - set(tabela_taxa_incidencia['nomedomunicipio'].unique())
-    if municipios_faltantes:
-        st.warning(f"Alguns municípios não foram calculados: {', '.join(municipios_faltantes)}")
+    tabela_tx_inc = calcular_tx_inc(df_filtered_grupo, populacao_2022)
 
     # Exibir a tabela com as taxas de incidência
     st.markdown(f"### Tabela de Taxa de Incidência por Município e Ano - Grupo de Estudo: {grupo_estudo}")
-    st.dataframe(tabela_taxa_incidencia)
+    st.dataframe(tabela_tx_inc)
 
     # Criação do gráfico de barras com a taxa de incidência por município
     mapa = df_filtered_grupo.groupby("nomedomunicipio").size().reset_index(name="casos")
     fig = px.bar(mapa.sort_values("casos", ascending=False), x="nomedomunicipio", y="casos", title="Casos por Município")
     st.plotly_chart(fig, use_container_width=True)
-
 
 
 # ========= PESSOA =========

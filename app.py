@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
+import statsmodels.formula.api as smf
+import statsmodels.api as sm
 import os
 
 # --- Login simples com st.secrets ---
@@ -202,10 +205,12 @@ elif pagina == "ITS / DiD":
     df_model['tempo'] = range(1, len(df_model)+1)
     df_model['tempo_pos'] = df_model['tempo'] * df_model['intervencao']
 
+    # Modelo GLM Poisson
     st.markdown("#### ITS com GLM (Poisson) por Semana Epidemiológica")
     glm_model = smf.glm("casos ~ tempo + intervencao + tempo_pos", data=df_model, family=sm.families.Poisson()).fit()
     st.write(glm_model.summary())
 
+    # Previsão com Intervalo de Confiança
     st.markdown("#### Previsão com Intervalo de Confiança")
     df_model['preditos'] = glm_model.predict(df_model)
     pred = glm_model.get_prediction(df_model)

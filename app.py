@@ -114,25 +114,13 @@ elif pagina == "Lugar":
     st.plotly_chart(fig, use_container_width=True)
 
 # ========= PESSOA =========
-
-if pagina == "Pessoa":
-    # Contagem das categorias de escolaridade
-    escolaridade_counts = df_filtered['cs_escolaridade'].value_counts().reset_index()
-    escolaridade_counts.columns = ['cs_escolaridade', 'count']
-    fig = px.bar(escolaridade_counts, x="cs_escolaridade", y="count", color="cs_escolaridade", title="Distribuição por Escolaridade")
-
-    # Exibição do perfil das pessoas afetadas
+elif pagina == "Pessoa":
     st.title("🧍 Perfil das Pessoas Afetadas")
     col1, col2 = st.columns(2)
-    
-    # Coluna 1
     with col1:
         st.plotly_chart(px.pie(df_filtered, names='cs_sexo', title='Distribuição por Sexo'), use_container_width=True)
-        st.plotly_chart(fig, use_container_width=True)
-    
-    # Coluna 2
     with col2:
-        # Ordenando as faixas etárias de forma crescente
+        # Ordenando as faixas etárias de forma crescente (ajustando para a ordem)
         faixa_etaria_order = sorted(df_filtered['faixa_etaria'].unique())  # Ajuste conforme necessário
         st.plotly_chart(px.histogram(df_filtered, 
                                      x="faixa_etaria", 
@@ -140,10 +128,7 @@ if pagina == "Pessoa":
                                      title="Distribuição por Faixa Etária", 
                                      category_orders={"faixa_etaria": faixa_etaria_order}), 
                         use_container_width=True)
-    
-    # Pie chart para Raça/Cor
     st.plotly_chart(px.pie(df_filtered, names='cs_raca', title='Distribuição por Raça/Cor'), use_container_width=True)
-
 
 # ========= DOWNLOAD =========
 elif pagina == "Download":

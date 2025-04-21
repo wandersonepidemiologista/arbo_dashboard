@@ -247,7 +247,7 @@ elif pagina == "ITS / DiD":
 
 # ========= ITS / DiD =========
 elif pagina == "Interpretação":
-    st.title("📊 Interpretação dos Resultados do Modelo GLM (Poisson
+    st.title("📊 Interpretação dos Resultados do Modelo GLM (Poisson) 
 # Função para mostrar a interpretação do modelo
 def mostrar_interpretacao():
     st.title("📊 Interpretação dos Resultados do Modelo GLM (Poisson) - Dengue")

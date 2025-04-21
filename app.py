@@ -117,8 +117,11 @@ with st.expander("SAIBA+"):
 # ========= LUGAR =========
 elif pagina == "Lugar":
     st.title("🗺 Distribuição Espacial dos Casos")
+    
+    # Correct indentation here
     mapa = df_filtered.groupby("nomedomunicipio").size().reset_index(name="casos")
     fig = px.bar(mapa.sort_values("casos", ascending=False), x="nomedomunicipio", y="casos", title="Casos por Município")
+    
     st.plotly_chart(fig, use_container_width=True)
 
 # ========= PESSOA =========

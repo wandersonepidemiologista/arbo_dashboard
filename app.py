@@ -30,7 +30,7 @@ st.set_page_config(page_title="ESP Brumadinho", layout="wide")
 @st.cache_data
 def load_data_cached():
     try:
-        df = pd.read_parquet("data/arbo14vale24_clean.parquet")
+        df = pd.read_parquet("data/arbo.parquet")
     except Exception as e:
         st.error(f"Erro ao carregar Parquet: {e}")
         st.stop()

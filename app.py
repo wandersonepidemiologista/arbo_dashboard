@@ -78,7 +78,8 @@ if df_filtered.empty:
 # ========= NAVEGAÇÃO =========
 
 # Navegação do Streamlit
-paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "Download", "ITS / DiD"]
+paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "ITS / DiD", "Download", "Sobre"]
+st.sidebar.title("📊 Navegação")
 pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
 
 # ========= VISÃO GERAL =========

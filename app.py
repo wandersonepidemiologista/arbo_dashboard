@@ -43,7 +43,7 @@ def load_data_cached():
 df = load_data_cached()
 
 # ========= SIDEBAR COM FILTROS =========
-logo_path = os.path.join(os.getcwd(), 'data', 'logo.png')  # Caminho da logo
+logo_path = os.path.join(os.getcwd(), 'data', 'logo.webp')  # Caminho da logo
 st.sidebar.image(logo_path, width=200)  # Exibe a logo no sidebar
 st.sidebar.title("🔐 Acesso Restrito")
 st.sidebar.markdown("Selecione os filtros desejados para a análise.")
@@ -78,7 +78,6 @@ pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
 
 # ========= VISÃO GERAL =========
 if pagina == "Visão Geral":
-    st.image(logo_path, width=200)  # Logo no topo
     st.title("📊 Situação Epidemiológica Geral")
     st.markdown("Bem-vindo ao dashboard de análise da Emergência em Saúde Pública (ESP) de Brumadinho.")
     st.metric("Casos Registrados", f"{len(df_filtered):,}")

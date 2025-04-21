@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
-from utils.data_loader import load_data
 import os
 
 # --- Login simples com st.secrets ---
@@ -45,7 +43,9 @@ def load_data_cached():
 df = load_data_cached()
 
 # ========= SIDEBAR COM FILTROS =========
-st.sidebar.title("🔍 Filtros")
+logo_path = os.path.join(os.getcwd(), 'data', 'logo.png')  # Caminho da logo
+st.sidebar.image(logo_path, width=200)  # Exibe a logo no sidebar
+st.sidebar.title("🔐 Acesso Restrito")
 st.sidebar.markdown("Selecione os filtros desejados para a análise.")
 estudo_sel = st.sidebar.multiselect("Grupo (caso/controle)", options=df['estudovale'].dropna().unique(), default=df['estudovale'].dropna().unique())
 periodo_sel = st.sidebar.multiselect("Período", options=df['periodo'].unique(), default=df['periodo'].unique())
@@ -54,7 +54,6 @@ munic_sel = st.sidebar.multiselect("Município", options=sorted(df['nomedomunici
 agravo_sel = st.sidebar.multiselect("Doença", options=df['classi_fin'].unique(), default=df['classi_fin'].unique())
 sexo_sel = st.sidebar.multiselect("Sexo", options=df['cs_sexo'].unique(), default=["1.Feminino", "2.Masculino"])
 raca_sel = st.sidebar.multiselect("Raça/Cor", options=df['cs_raca'].unique(), default=df['cs_raca'].unique())
-
 
 # ========= FILTRAGEM =========
 df_filtered = df[
@@ -74,19 +73,19 @@ if df_filtered.empty:
     st.stop()
 
 # ========= NAVEGAÇÃO =========
-# Modificando a navegação para as abas na parte superior
 paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "Download", "ITS / DiD"]
 pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
 
 # ========= VISÃO GERAL =========
 if pagina == "Visão Geral":
+    st.image(logo_path, width=200)  # Logo no topo
     st.title("📊 Situação Epidemiológica Geral")
+    st.markdown("Bem-vindo ao dashboard de análise da Emergência em Saúde Pública (ESP) de Brumadinho.")
     st.metric("Casos Registrados", f"{len(df_filtered):,}")
     st.metric("Municípios", df_filtered['nomedomunicipio'].nunique())
     st.metric("Período", f"{anos_sel[0]} - {anos_sel[1]}")
 
-    fig1 = px.histogram(df_filtered, x="nu_ano", color="classi_fin", barmode="group",
-                        title="Casos por Ano e Tipo de Agravo")
+    fig1 = px.histogram(df_filtered, x="nu_ano", color="classi_fin", barmode="group", title="Casos por Ano e Tipo de Agravo")
     st.plotly_chart(fig1, use_container_width=True)
 
     st.markdown("---")
@@ -105,16 +104,14 @@ if pagina == "Visão Geral":
 elif pagina == "Tempo":
     st.title("⏳ Análise Temporal")
     fig = px.line(df_filtered.groupby(['nu_ano', 'classi_fin']).size().reset_index(name='casos'),
-                  x='nu_ano', y='casos', color='classi_fin',
-                  title="Série Temporal de Casos por Ano")
+                  x='nu_ano', y='casos', color='classi_fin', title="Série Temporal de Casos por Ano")
     st.plotly_chart(fig, use_container_width=True)
 
 # ========= LUGAR =========
 elif pagina == "Lugar":
     st.title("🗺 Distribuição Espacial dos Casos")
     mapa = df_filtered.groupby("nomedomunicipio").size().reset_index(name="casos")
-    fig = px.bar(mapa.sort_values("casos", ascending=False), x="nomedomunicipio", y="casos",
-                 title="Casos por Município")
+    fig = px.bar(mapa.sort_values("casos", ascending=False), x="nomedomunicipio", y="casos", title="Casos por Município")
     st.plotly_chart(fig, use_container_width=True)
 
 # ========= PESSOA =========
@@ -124,8 +121,7 @@ elif pagina == "Pessoa":
     with col1:
         st.plotly_chart(px.pie(df_filtered, names='cs_sexo', title='Distribuição por Sexo'), use_container_width=True)
     with col2:
-        st.plotly_chart(px.histogram(df_filtered, x="faixa_etaria", color="classi_fin",
-                                     title="Distribuição por Faixa Etária"), use_container_width=True)
+        st.plotly_chart(px.histogram(df_filtered, x="faixa_etaria", color="classi_fin", title="Distribuição por Faixa Etária"), use_container_width=True)
     st.plotly_chart(px.pie(df_filtered, names='cs_raca', title='Distribuição por Raça/Cor'), use_container_width=True)
 
 # ========= DOWNLOAD =========

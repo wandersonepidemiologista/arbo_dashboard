@@ -305,7 +305,7 @@ elif pagina == "Sobre":
     st.title("📖 Sobre o Dashboard")
 
     st.markdown("""
-    Este dashboard foi desenvolvido para apresentar a análise dos dados da **Emergência em Saúde Pública (ESP)** de Brumadinho, com foco na avaliação do impacto do rompimento da barragem de rejeitos de **Brumadinho** sobre a saúde pública da região. O evento, ocorrido em 25 de janeiro de 2019, teve profundas consequências para os municípios localizados na bacia do Rio Paraopeba, afetando diretamente a saúde da população de 26 municípios. Este dashboard visa fornecer uma visão abrangente e interativa da evolução epidemiológica das doenças na área afetada, permitindo uma análise detalhada ao longo do tempo, no espaço geográfico e nas características demográficas das pessoas impactadas.
+    Este dashboard está sendo desenvolvido para apresentar a análise dos dados da **Emergência em Saúde Pública (ESP)** de Brumadinho, com foco na avaliação do impacto do rompimento da barragem de rejeitos de **Brumadinho** sobre a saúde pública da região. O evento, ocorrido em 25 de janeiro de 2019, teve profundas consequências para os municípios localizados na bacia do Rio Paraopeba, afetando diretamente a saúde da população de 26 municípios. Este dashboard visa fornecer uma visão abrangente e interativa da evolução epidemiológica das doenças na área afetada, permitindo uma análise detalhada ao longo do tempo, no espaço geográfico e nas características demográficas das pessoas impactadas.
 
     **Objetivos:**
     
@@ -344,3 +344,6 @@ elif pagina == "Sobre":
     **Municípios não afetados nas mesmas regiões de saúde (n=41):**  
     Sete Lagoas, Patos de Minas, Nova Serrana, Pitangui, Corinto, Vazante, Presidente Olegário, Lagoa Formosa, Serra do Salitre, Prudente de Morais, Igaratinga, Capim Branco, Buenópolis, Guimarânia, Cordisburgo, Inimutaba, Bonfim, Baldim, Lagamar, Varjão de Minas, Santana de Pirapama, Guarda-Mor, Inhaúma, Jequitibá, Crucilândia, Rio Manso, Conceição do Pará, Piedade dos Gerais, Funilândia, Augusto de Lima, Cachoeira da Prata, Presidente Juscelino, Cruzeiro da Fortaleza, Quartel Geral, Leandro Ferreira, Onça de Pitangui, Morro da Garça, Santo Hipólito, Araçaí, Monjolos, Cedro do Abaeté.
     """)
+    
+    st.markdown("**Desenvolvimento: Wanderson Oliveira - Epidemiologista**")
+    st.markdown("**Versão: beta 1 - NÃO DIVULGAR**")

@@ -187,7 +187,7 @@ elif pagina == "Pessoa":
     # Exibindo o gráfico
     st.plotly_chart(fig_piramide, use_container_width=True)
 
- # Criando a Pirâmide Etária com Evolução por Óbito antes e depois da ESP
+     # Criando a Pirâmide Etária com Evolução por Óbito antes e depois da ESP
     # Filtrando os dados para "Pós-ESP" e "Pré-ESP"
     df_esp = df_filtered[df_filtered['periodo'].isin(['Pré-ESP', 'Pós-ESP'])]
     
@@ -197,7 +197,7 @@ elif pagina == "Pessoa":
     # Filtrar para óbitos (classi_fin == 1) e ordenação por faixa etária
     piramide_obbito = piramide_obbito[piramide_obbito['classi_fin'] == '1.Obito']
     
-    # Separamos os dados antes e depois da ESP
+    # Separar os dados antes e depois da ESP
     piramide_pre_esp = piramide_obbito[piramide_obbito['periodo'] == 'Pré-ESP']
     piramide_pos_esp = piramide_obbito[piramide_obbito['periodo'] == 'Pós-ESP']
 

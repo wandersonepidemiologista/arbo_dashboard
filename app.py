@@ -45,13 +45,15 @@ df = load_data_cached()
 
 # ========= SIDEBAR COM FILTROS =========
 st.sidebar.title("🔍 Filtros")
+st.sidebar.markdown("Selecione os filtros desejados para a análise.")
+estudo_sel = st.sidebar.multiselect("Grupo (caso/controle)", options=df['estudovale'].dropna().unique(), default=df['estudovale'].dropna().unique())
 periodo_sel = st.sidebar.multiselect("Período", options=df['periodo'].unique(), default=df['periodo'].unique())
 anos_sel = st.sidebar.slider("Ano da Notificação", int(df['nu_ano'].min()), int(df['nu_ano'].max()), (2014, 2024))
 munic_sel = st.sidebar.multiselect("Município", options=sorted(df['nomedomunicipio'].unique()), default=None)
 agravo_sel = st.sidebar.multiselect("Doença", options=df['classi_fin'].unique(), default=df['classi_fin'].unique())
 sexo_sel = st.sidebar.multiselect("Sexo", options=df['cs_sexo'].unique(), default=["1.Feminino", "2.Masculino"])
 raca_sel = st.sidebar.multiselect("Raça/Cor", options=df['cs_raca'].unique(), default=df['cs_raca'].unique())
-estudo_sel = st.sidebar.multiselect("Grupo (caso/controle)", options=df['estudovale'].dropna().unique(), default=df['estudovale'].dropna().unique())
+
 
 # ========= FILTRAGEM =========
 df_filtered = df[

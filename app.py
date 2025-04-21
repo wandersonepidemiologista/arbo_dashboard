@@ -115,9 +115,18 @@ elif pagina == "Tempo":
 # ========= LUGAR =========
 elif pagina == "Lugar":
     st.title("🗺 Distribuição Espacial dos Casos")
+
+    # Agrupando os dados por municipio e estudovale, contando os anos
+    tabela_municipio_ano = df_filtered.groupby(['nomedomunicipio', 'nu_ano', 'estudovale']).size().reset_index(name="quantidade")
+
+    # Exibir a tabela de forma interativa no Streamlit
+    st.markdown("### Tabela de Casos por Município, Ano e Grupo de Estudo")
+    st.dataframe(tabela_municipio_ano)
+
+    # Criação do gráfico de barras
     mapa = df_filtered.groupby("nomedomunicipio").size().reset_index(name="casos")
     fig = px.bar(mapa.sort_values("casos", ascending=False), x="nomedomunicipio", y="casos", title="Casos por Município")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)    
 
 # ========= PESSOA =========
 elif pagina == "Pessoa":

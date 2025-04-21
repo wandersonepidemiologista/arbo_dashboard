@@ -81,10 +81,6 @@ if df_filtered.empty:
 paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "Download", "ITS / DiD", "Interpretação"]
 pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
 
-# Mostrar a interpretação quando o usuário escolher a aba de interpretação
-if pagina == "Interpretação":
-    mostrar_interpretacao()
-
 # ========= VISÃO GERAL =========
 if pagina == "Visão Geral":
     st.title("📊 Situação Epidemiológica Geral")

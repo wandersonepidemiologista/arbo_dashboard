@@ -105,7 +105,8 @@ elif pagina == "Tempo":
     fig = px.bar(df_filtered.groupby(['nu_ano', 'classi_fin']).size().reset_index(name='casos'),
                   x='nu_ano', y='casos', color='classi_fin', title="Série Temporal de Casos por Ano")
     st.plotly_chart(fig, use_container_width=True)
-    with st.expander("SAIBA+"):
+ 
+with st.expander("SAIBA+"):
     st.write('''
         O rompimento da barragem ocorreu em janeiro de 2019. Se você selecionar o Período ***Pré-ESP***, significa que verá
         o período de 2014 a 2018, antes do rompimento. Se selecionar o Período ***Pós-ESP***, verá o período de 2019 a 2024.

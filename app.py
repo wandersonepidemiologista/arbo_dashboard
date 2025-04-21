@@ -245,10 +245,8 @@ elif pagina == "ITS / DiD":
     fig_did = px.line(df_did, x="ano", y="casos", color=df_did['grupo'].map({1: "Caso", 0: "Controle"}), title=f"Casos Anuais - {agravo_focus} (Comparação Caso vs Controle)")
     st.plotly_chart(fig_did, use_container_width=True)
 
-# ========= ITS / DiD =========
-elif pagina == "Interpretação":
-    st.title("📊 Interpretação dos Resultados do Modelo GLM (Poisson) 
-# Função para mostrar a interpretação do modelo
+# ========= INTERPRETAÇÃO  =========
+# Definir a função de exibição da interpretação fora da navegação
 def mostrar_interpretacao():
     st.title("📊 Interpretação dos Resultados do Modelo GLM (Poisson) - Dengue")
     

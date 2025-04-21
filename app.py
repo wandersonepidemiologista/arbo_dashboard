@@ -304,21 +304,8 @@ elif pagina == "ITS / DiD":
 elif pagina == "Sobre":
     st.title("📖 Sobre o Dashboard")
 
-    # Função para carregar o conteúdo do README.md
-    def carregar_readme():
-        try:
-            # Caminho completo do arquivo README.md
-            with open(r'D:\github\arbo_dashboard\README.md', 'r', encoding='utf-8') as file:
-                return file.read()
-        except FileNotFoundError:
-            st.error("Arquivo README.md não encontrado.")
-            return ""
-
-    # Exibir o conteúdo do README.md
-    readme_conteudo = carregar_readme()
-
-    # Adicionar o conteúdo ao Streamlit usando st.markdown
-    if readme_conteudo:
-        with st.expander("Clique para ver o README"):
-            st.markdown(readme_conteudo)
-
+    st.markdown("""
+    Este dashboard foi desenvolvido para apresentar a análise dos dados da Emergência em Saúde Pública (ESP) de Brumadinho, com foco na avaliação do impacto do rompimento da barragem de rejeitos na saúde pública da região.  
+    O objetivo principal é fornecer uma visão abrangente sobre a situação epidemiológica, permitindo a visualização de dados ao longo do tempo, espaço e características demográficas das pessoas afetadas.
+    Além disso, o dashboard inclui análises de séries temporais interrompidas (ITS) e Diferenças em Diferenças (DiD) para avaliar o impacto das intervenções implementadas após o evento.
+    """)

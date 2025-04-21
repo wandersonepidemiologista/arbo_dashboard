@@ -78,7 +78,7 @@ if df_filtered.empty:
 # ========= NAVEGAÇÃO =========
 
 # Navegação do Streamlit
-paginas = ["👁️ Visão Geral", "⌛Tempo", "🗺️Lugar", "👤Pessoa", "📥Download", "🧮ITS / DiD", "💡Interpretação"]
+paginas = ["Visão Geral", "Tempo", "Lugar", "Pessoa", "Download", "ITS / DiD", "Interpretação"]
 pagina = st.radio("Escolha uma aba", paginas, horizontal=True)
 
 # Mostrar a interpretação quando o usuário escolher a aba de interpretação

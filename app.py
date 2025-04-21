@@ -117,10 +117,13 @@ elif pagina == "Lugar":
 elif pagina == "Pessoa":
     st.title("🧍 Perfil das Pessoas Afetadas")
     col1, col2 = st.columns(2)
+    
+    # Gráfico de Pizza por Sexo
     with col1:
         st.plotly_chart(px.pie(df_filtered, names='cs_sexo', title='Distribuição por Sexo'), use_container_width=True)
+    
+    # Gráfico de Histogram para Faixa Etária
     with col2:
-        # Ordenando as faixas etárias de forma crescente (ajustando para a ordem)
         faixa_etaria_order = sorted(df_filtered['faixa_etaria'].unique())  # Ajuste conforme necessário
         st.plotly_chart(px.histogram(df_filtered, 
                                      x="faixa_etaria", 
@@ -128,7 +131,21 @@ elif pagina == "Pessoa":
                                      title="Distribuição por Faixa Etária", 
                                      category_orders={"faixa_etaria": faixa_etaria_order}), 
                         use_container_width=True)
+
+    # Gráfico de Pizza por Raça/Cor
     st.plotly_chart(px.pie(df_filtered, names='cs_raca', title='Distribuição por Raça/Cor'), use_container_width=True)
+
+    # Gráfico de Barras por Escolaridade (cs_escol_n)
+    escolaridade_counts = df_filtered['cs_escol_n'].value_counts().reset_index()
+    escolaridade_counts.columns = ['cs_escol_n', 'count']
+    fig_escolaridade = px.bar(escolaridade_counts, 
+                              x="cs_escol_n", 
+                              y="count", 
+                              color="cs_escol_n", 
+                              title="Distribuição por Escolaridade")
+    
+    st.plotly_chart(fig_escolaridade, use_container_width=True)
+
 
 # ========= DOWNLOAD =========
 elif pagina == "Download":

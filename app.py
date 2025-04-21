@@ -121,7 +121,14 @@ elif pagina == "Pessoa":
     with col1:
         st.plotly_chart(px.pie(df_filtered, names='cs_sexo', title='Distribuição por Sexo'), use_container_width=True)
     with col2:
-        st.plotly_chart(px.histogram(df_filtered, x="faixa_etaria", color="classi_fin", title="Distribuição por Faixa Etária"), use_container_width=True)
+        # Ordenando as faixas etárias de forma crescente (ajustando para a ordem)
+        faixa_etaria_order = sorted(df_filtered['faixa_etaria'].unique())  # Ajuste conforme necessário
+        st.plotly_chart(px.histogram(df_filtered, 
+                                     x="faixa_etaria", 
+                                     color="classi_fin", 
+                                     title="Distribuição por Faixa Etária", 
+                                     category_orders={"faixa_etaria": faixa_etaria_order}), 
+                        use_container_width=True)
     st.plotly_chart(px.pie(df_filtered, names='cs_raca', title='Distribuição por Raça/Cor'), use_container_width=True)
 
 # ========= DOWNLOAD =========
